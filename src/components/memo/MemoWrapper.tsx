@@ -6,23 +6,12 @@ import { css } from "@emotion/react";
 type MemoItem = {
   title?: string | null;
   content?: string | null;
+  id?: Number | null;
 };
 
 type IconProps = {
   show: string | undefined;
 };
-
-const memoItems: MemoItem[] = [
-  { title: "title1", content: "sdkflskdflksfd" },
-  { title: "title2", content: "sdkflskdflksfd" },
-  { title: "title3", content: "sdkflskdflksfd" },
-  { title: "title4", content: "sdkflskdflksfd" },
-  { title: "title5", content: "sdkflskdflksfd" },
-  { title: "title6", content: "sdkflskdflksfd" },
-  { title: "title7", content: "sdkflskdflksfd" },
-  { title: "title8", content: "sdkflskdflksfd" },
-  { title: "title9", content: "sdkflskdflksfd" },
-];
 
 const MemoWrapper = () => {
   const handleTitleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -38,18 +27,19 @@ const MemoWrapper = () => {
     }
   };
 
-  const memoString = localStorage.getItem("memo");
-  const parsedMemos = memoString ? JSON.parse(memoString) : [];
+  let memoString = localStorage.getItem("memo");
+  let parsedMemos = memoString ? JSON.parse(memoString) : [];
 
-  const [memos, setMemos] = useState<{ title: string | null; content: string | null }[]>(parsedMemos);
+  const [memos, setMemos] = useState<{ title: string | null; content: string | null; id: Number | null }[]>(parsedMemos);
 
   const handleSave = () => {
     if (contentRef.current?.value) {
-      const newMemo: { title: string | null; content: string } = {
+      const newMemo: { title: string | null; content: string; id: Number | null } = {
         title: titleRef.current?.value ?? "",
         content: contentRef.current?.value ?? "",
+        id: Date.now(),
       };
-      setMemos((prev) => [...prev, newMemo]);
+      setMemos((prev) => [newMemo, ...prev]);
 
       if (titleRef.current) {
         titleRef.current.value = "";
@@ -77,6 +67,13 @@ const MemoWrapper = () => {
     }
   };
 
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const id = e.currentTarget.parentElement?.id;
+    const filterArr = memos.filter((v) => v.id !== Number(id));
+    setMemos(filterArr);
+    parsedMemos = window.localStorage.getItem("memo");
+  };
+
   return (
     <Base>
       <ItemWrapper>
@@ -85,13 +82,14 @@ const MemoWrapper = () => {
         <ItemCreated></ItemCreated>
         <SaveBtn show={ContentFill ? "true" : "false"} />
       </ItemWrapper>
-      {memoItems.map((memoItem, index) => {
-        const { title, content } = memoItem;
+      {memos.map((memoItem: MemoItem, index: number) => {
+        const { title, content, id } = memoItem;
         return (
-          <ItemWrapper>
+          <ItemWrapper id={String(id)}>
             <ItemTitle>{title}</ItemTitle>
             <ItemContent>{content}</ItemContent>
             <ItemCreated></ItemCreated>
+            <button onClick={handleDelete}>삭제</button>
           </ItemWrapper>
         );
       })}
@@ -102,8 +100,9 @@ const MemoWrapper = () => {
 const Base = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, auto));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
+  padding: 2rem 0;
 `;
 
 const ItemWrapper = styled.div`
@@ -115,6 +114,7 @@ const ItemWrapper = styled.div`
   flex-direction: column;
   gap: 10px;
   position: relative;
+  user-select: none;
 `;
 
 const ItemTitle = styled.div`
