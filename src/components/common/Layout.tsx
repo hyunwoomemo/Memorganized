@@ -3,11 +3,12 @@ import styled from "@emotion/styled";
 import Search from "../home/Search";
 import Sidebar from "../home/Sidebar";
 import Memo from "../home/Memo";
+import Login from "../home/Login";
 
-const Layout = () => {
+const Layout = ({ user }: any) => {
   return (
     <Base>
-      <Sidebar />
+      <Sidebar user={user} />
       <Memo />
     </Base>
   );

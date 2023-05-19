@@ -15,9 +15,14 @@ const Base = styled.div`
   > input {
     background: none;
     border: 2px solid #ffffff;
+    outline: none;
     border-radius: 10px;
     color: var(--main-color);
     padding: 1rem;
+
+    &:focus {
+      border: 2px solid var(--primary-color);
+    }
   }
 `;
 

@@ -1,12 +1,16 @@
-import React, { ChangeEvent, useState, useRef, useEffect } from "react";
+import React, { ChangeEvent, useState, useRef, useEffect, useContext } from "react";
 import styled from "@emotion/styled";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { css } from "@emotion/react";
-
+import { collection, addDoc, setDoc, doc, getDocs, onSnapshot, deleteDoc, orderBy, query, where } from "firebase/firestore";
+import { auth, db } from "../../service/firbase";
+import { UserContext } from "../../context/UserContext";
 type MemoItem = {
   title?: string | null;
   content?: string | null;
-  id?: Number | null;
+  id?: string;
+  createdAt?: number;
+  userId?: string;
 };
 
 type IconProps = {
@@ -14,6 +18,8 @@ type IconProps = {
 };
 
 const MemoWrapper = () => {
+  const { user } = useContext(UserContext);
+
   const handleTitleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && contentRef.current) {
       e.preventDefault();
@@ -27,19 +33,14 @@ const MemoWrapper = () => {
     }
   };
 
-  let memoString = localStorage.getItem("memo");
-  let parsedMemos = memoString ? JSON.parse(memoString) : [];
-
-  const [memos, setMemos] = useState<{ title: string | null; content: string | null; id: Number | null }[]>(parsedMemos);
-
-  const handleSave = () => {
+  const handleSave = async () => {
     if (contentRef.current?.value) {
-      const newMemo: { title: string | null; content: string; id: Number | null } = {
+      const newMemo: MemoItem = {
         title: titleRef.current?.value ?? "",
         content: contentRef.current?.value ?? "",
-        id: Date.now(),
+        createdAt: Date.now(),
+        userId: user.uid,
       };
-      setMemos((prev) => [newMemo, ...prev]);
 
       if (titleRef.current) {
         titleRef.current.value = "";
@@ -47,15 +48,15 @@ const MemoWrapper = () => {
       if (contentRef.current) {
         contentRef.current.value = "";
       }
+
+      setContentFill(false);
+
+      await addDoc(collection(db, "memos"), newMemo);
     }
   };
 
   const contentRef = useRef<HTMLTextAreaElement | null>(null);
   const titleRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    window.localStorage.setItem("memo", JSON.stringify(memos));
-  }, [memos]);
 
   const [ContentFill, setContentFill] = useState<boolean>(false);
 
@@ -67,12 +68,32 @@ const MemoWrapper = () => {
     }
   };
 
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const id = e.currentTarget.parentElement?.id;
-    const filterArr = memos.filter((v) => v.id !== Number(id));
-    setMemos(filterArr);
-    parsedMemos = window.localStorage.getItem("memo");
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "memos", id));
+      console.log("Document successfully deleted!");
+    } catch (error) {
+      console.error("Error deleting document: ", error);
+    }
   };
+
+  type Memo = {};
+
+  const [memo, setMemo] = useState<Memo[]>([]);
+
+  useEffect(() => {
+    const q = query(collection(db, "memos"), orderBy("createdAt", "desc"), where("userId", "==", user.uid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const memosArray = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log(memosArray);
+      setMemo(memosArray);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <Base>
@@ -80,16 +101,17 @@ const MemoWrapper = () => {
         <InputTitle placeholder="제목을 입력하세요" ref={titleRef} onKeyDown={handleTitleKeydown}></InputTitle>
         <InputContent placeholder="내용을 입력하세요" ref={contentRef} onChange={handleContentChange} onKeyDown={handleContentKeydown}></InputContent>
         <ItemCreated></ItemCreated>
-        <SaveBtn show={ContentFill ? "true" : "false"} />
+        <SaveBtn show={ContentFill ? "true" : "false"} onClick={handleSave} />
       </ItemWrapper>
-      {memos.map((memoItem: MemoItem, index: number) => {
+      {memo.map((memoItem: MemoItem) => {
         const { title, content, id } = memoItem;
         return (
-          <ItemWrapper id={String(id)}>
-            <ItemTitle>{title}</ItemTitle>
-            <ItemContent>{content}</ItemContent>
+          <ItemWrapper>
+            {title ? <ItemTitle>{title}</ItemTitle> : undefined}
+            <ItemContent dangerouslySetInnerHTML={content ? { __html: content?.replaceAll(" ", "&nbsp;").replaceAll("\n", "<br />") } : undefined}></ItemContent>
+
             <ItemCreated></ItemCreated>
-            <button onClick={handleDelete}>삭제</button>
+            <button onClick={() => id && handleDelete(id)}>삭제</button>
           </ItemWrapper>
         );
       })}
@@ -123,7 +145,16 @@ const ItemTitle = styled.div`
   padding: 10px 0;
 `;
 
-const ItemContent = styled.div``;
+const ItemContent = styled.div`
+  line-height: 30px;
+
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+`;
 
 const ItemCreated = styled.div``;
 
@@ -159,6 +190,8 @@ const SaveBtn = styled(AiOutlineCheckCircle)<IconProps>`
   width: 30px;
   height: 30px;
   transition: all 0.3s;
+  cursor: pointer;
+  color: var(--primary-color);
 
   ${({ show }) =>
     show === "true"
