@@ -5,68 +5,22 @@ import { css } from "@emotion/react";
 import { collection, addDoc, setDoc, doc, getDocs, onSnapshot, deleteDoc, orderBy, query, where } from "firebase/firestore";
 import { auth, db } from "../../service/firbase";
 import { UserContext } from "../../context/UserContext";
+import { AddContext } from "../../context/AddContext";
+import AddMemo from "./AddMemo";
+import TuiViewer from "./TuiViewer";
+import { ActiveDetailContext } from "../../context/ActiveDetailContext";
+import { toast } from "react-hot-toast";
+
 type MemoItem = {
   title?: string | null;
-  content?: string | null;
-  id?: string;
+  content?: any;
+  id?: any;
   createdAt?: number;
   userId?: string;
 };
 
-type IconProps = {
-  show: string | undefined;
-};
-
 const MemoWrapper = () => {
   const { user } = useContext(UserContext);
-
-  const handleTitleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && contentRef.current) {
-      e.preventDefault();
-      contentRef.current.focus();
-    }
-  };
-
-  const handleContentKeydown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.ctrlKey && e.key === "Enter") {
-      handleSave();
-    }
-  };
-
-  const handleSave = async () => {
-    if (contentRef.current?.value) {
-      const newMemo: MemoItem = {
-        title: titleRef.current?.value ?? "",
-        content: contentRef.current?.value ?? "",
-        createdAt: Date.now(),
-        userId: user.uid,
-      };
-
-      if (titleRef.current) {
-        titleRef.current.value = "";
-      }
-      if (contentRef.current) {
-        contentRef.current.value = "";
-      }
-
-      setContentFill(false);
-
-      await addDoc(collection(db, "memos"), newMemo);
-    }
-  };
-
-  const contentRef = useRef<HTMLTextAreaElement | null>(null);
-  const titleRef = useRef<HTMLInputElement | null>(null);
-
-  const [ContentFill, setContentFill] = useState<boolean>(false);
-
-  const handleContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value) {
-      setContentFill(true);
-    } else {
-      setContentFill(false);
-    }
-  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -95,26 +49,50 @@ const MemoWrapper = () => {
     return () => unsubscribe();
   }, []);
 
+  const { setAddModal } = useContext(AddContext);
+
+  const { activeDetail, setActiveDetail } = useContext(ActiveDetailContext);
+  const [activeId, setActiveId] = useState();
+  const [activeTitle, setActiveTitle] = useState("");
+  const [animation, setAnimation] = useState(false);
+
+  const handleView = (content: any, id: any, title: any) => {
+    setActiveDetail(content);
+    setTimeout(() => {
+      setAnimation(true);
+    }, 100);
+    setActiveId(id);
+    setActiveTitle(title);
+  };
+
+  console.log(animation);
+
   return (
     <Base>
-      <ItemWrapper>
-        <InputTitle placeholder="제목을 입력하세요" ref={titleRef} onKeyDown={handleTitleKeydown}></InputTitle>
-        <InputContent placeholder="내용을 입력하세요" ref={contentRef} onChange={handleContentChange} onKeyDown={handleContentKeydown}></InputContent>
-        <ItemCreated></ItemCreated>
-        <SaveBtn show={ContentFill ? "true" : "false"} onClick={handleSave} />
-      </ItemWrapper>
       {memo.map((memoItem: MemoItem) => {
         const { title, content, id } = memoItem;
         return (
-          <ItemWrapper>
+          <ItemWrapper onClick={() => handleView(content, id, title)}>
             {title ? <ItemTitle>{title}</ItemTitle> : undefined}
             <ItemContent dangerouslySetInnerHTML={content ? { __html: content?.replaceAll(" ", "&nbsp;").replaceAll("\n", "<br />") } : undefined}></ItemContent>
-
             <ItemCreated></ItemCreated>
-            <button onClick={() => id && handleDelete(id)}>삭제</button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                id && handleDelete(id);
+                toast("삭제되었습니다!", {
+                  icon: "🔴",
+                });
+              }}
+            >
+              삭제
+            </button>
           </ItemWrapper>
         );
       })}
+      {activeDetail && <TuiViewer title={activeTitle} id={activeId} show={animation} className="viewer" content={activeDetail} selector="#portal" setAni={setAnimation} />}
+      <AddBtn onClick={() => setAddModal(true)}>추가</AddBtn>
+      <AddMemo />
     </Base>
   );
 };
@@ -158,51 +136,19 @@ const ItemContent = styled.div`
 
 const ItemCreated = styled.div``;
 
-const InputStyle = styled.input`
-  background: none;
-  border: 0;
-  color: #fff;
-  outline: none;
-`;
-
-const TextareaStyle = styled.textarea`
-  background: none;
-  border: 0;
-  color: #fff;
-  outline: none;
-  resize: none;
-`;
-
-const InputTitle = styled(InputStyle)`
-  font-size: 18px;
-  border-bottom: 1px solid #ffffff3c;
-  padding: 10px 0;
-`;
-
-const InputContent = styled(TextareaStyle)`
-  flex: 1 1 auto;
-`;
-
-const SaveBtn = styled(AiOutlineCheckCircle)<IconProps>`
+const AddBtn = styled.div`
   position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 30px;
-  height: 30px;
-  transition: all 0.3s;
+  bottom: 30px;
+  right: 30px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  color: var(--primary-color);
-
-  ${({ show }) =>
-    show === "true"
-      ? css`
-          opacity: 1;
-          pointer-events: all;
-        `
-      : css`
-          opacity: 0;
-          pointer-events: none;
-        `}
+  z-index: 99;
 `;
 
 export default MemoWrapper;

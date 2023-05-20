@@ -5,26 +5,25 @@ import { AddContext } from "../../context/AddContext";
 import { gsap } from "gsap";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import TuiEditor from "./TuiEditor";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../service/firbase";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { UserContext } from "../../context/UserContext";
+import UpdateTuiEditor from "./UpdateTuiEditor";
+import { ActiveDetailContext } from "../../context/ActiveDetailContext";
 
-const AddMemo = ({ selector = "#portal" }) => {
-  const { addModal, setAddModal } = useContext(AddContext);
+type Update = {
+  selector?: string;
+  content: string;
+  setEditMode: any;
+  id: any;
+  title: any;
+};
+
+const UpdateMemo = ({ content, setEditMode, id, title }: Update) => {
   const { user } = useContext(UserContext);
-
-  useEffect(() => {
-    if (addModal) {
-      gsap.fromTo(".wrapper", { opacity: 0 }, { opacity: 1, duration: 0.5, pointerEvents: "all" });
-    } else {
-      // 애니메이션 종료
-      gsap.fromTo(".wrapper", { opacity: 1 }, { opacity: 0, duration: 0.5, pointerEvents: "none" });
-    }
-
-    return () => {};
-  }, [addModal]);
+  const { setActiveDetail } = useContext(ActiveDetailContext);
 
   const ref = useRef<any>(null);
 
@@ -32,80 +31,62 @@ const AddMemo = ({ selector = "#portal" }) => {
     title: string;
   };
 
-  const resetEditorValue = () => {
-    if (ref.current) {
-      const editorInstance = ref.current.getInstance();
-      editorInstance.setHTML("");
-    }
-  };
+  const { register, handleSubmit } = useForm<FormValues>();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>();
-
-  const handleClose = () => {
-    setAddModal(false);
-    reset({ title: "" });
-    resetEditorValue();
-  };
-
-  const handleSave = handleSubmit(async (data) => {
+  const handleUpdate = handleSubmit(async (data) => {
     try {
       const editorIns = ref?.current?.getInstance();
       // 에디터 작성 내용 markdown으로 저장
       const contentHTML = editorIns.getHTML();
 
       // contentMark 길이 체크
-      if (contentHTML.replaceAll("p", "").replaceAll("br", "").replaceAll("<", "").replaceAll(">", "").replaceAll("/", "")?.length === 0) {
-        toast.error("글을 작성해주세요");
-        return;
+      if (contentHTML?.length === 0) {
+        throw new Error("내용을 입력해주세요.");
       }
 
+      const docRef = doc(db, "memos", id);
+
       // add firestore
-      await addDoc(collection(db, "memos"), {
+      await updateDoc(docRef, {
+        // Pass the DocumentReference to updateDoc
         title: data.title,
         content: contentHTML,
         createdAt: new Date(),
         userId: user.uid,
       });
 
-      toast.success("메모를 추가했습니다.");
-      handleClose();
+      toast.success("메모를 수정했습니다.");
+
+      setEditMode(false);
+      setActiveDetail(false);
     } catch (e) {
-      console.log(e);
       toast.error(`${e}` || "다시 시도해주세요.");
     }
   });
 
   return (
-    <Portal selector={selector}>
+    <>
       <div>
         <Toaster />
       </div>
       <Wrapper className="wrapper">
         <Overlay></Overlay>
-        <Base onSubmit={handleSave}>
+        <Base onSubmit={handleUpdate}>
           <TitleWrapper>
-            <TitleInput {...register("title")} placeholder="제목을 입력해주세요"></TitleInput>
+            <TitleInput {...register("title")} placeholder="제목을 입력해주세요" defaultValue={title}></TitleInput>
           </TitleWrapper>
-          <TuiEditor content="" editorRef={ref} />
+          <UpdateTuiEditor content={content} editorRef={ref} />
           <Footer>
-            <GoBack onClick={handleClose}>닫기</GoBack>
-            <SubMit type="submit">작성하기</SubMit>
+            <GoBack onClick={() => setEditMode(false)}>닫기</GoBack>
+            <SubMit type="submit">수정하기</SubMit>
           </Footer>
         </Base>
       </Wrapper>
-    </Portal>
+    </>
   );
 };
 
-const Wrapper = styled.div`
-  opacity: 0;
-  pointer-events: none;
-`;
+const Wrapper = styled.div``;
 
 const Overlay = styled.div`
   width: 100vw;
@@ -118,8 +99,8 @@ const Overlay = styled.div`
 `;
 
 const Base = styled.form`
-  width: 70vmin;
-  height: 70vmin;
+  width: 90vmin;
+  height: 90vmin;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -141,7 +122,6 @@ const TitleInput = styled.input`
   border: 0;
   background: none;
   color: var(--main-color);
-  outline: none;
 `;
 
 const Footer = styled.div`
@@ -172,4 +152,4 @@ const SubMit = styled.button`
   cursor: pointer;
 `;
 
-export default AddMemo;
+export default UpdateMemo;
