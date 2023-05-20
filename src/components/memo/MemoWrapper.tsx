@@ -10,6 +10,7 @@ import AddMemo from "./AddMemo";
 import TuiViewer from "./TuiViewer";
 import { ActiveDetailContext } from "../../context/ActiveDetailContext";
 import { toast } from "react-hot-toast";
+import { GoTrashcan } from "react-icons/go";
 
 type MemoItem = {
   title?: string | null;
@@ -65,34 +66,72 @@ const MemoWrapper = () => {
     setActiveTitle(title);
   };
 
-  console.log(animation);
+  // 드래그 앤 드랍 삭제 기능 구현
+
+  const [draggedMemo, setDraggedMemo] = useState<string | null>(null);
+  const [showTrashBin, setShowTrashBin] = useState<boolean>(false);
+  const [deleteAble, setDeleteAble] = useState<boolean>(false);
+
+  const handleDragStart = (id: string) => {
+    setDraggedMemo(id);
+    setShowTrashBin(true);
+  };
+
+  const handleDragEnd = () => {
+    setShowTrashBin(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDeleteAble(true);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    console.log("삭제!");
+    draggedMemo && handleDelete(draggedMemo);
+    setDeleteAble(false);
+    toast("삭제되었습니다!", {
+      icon: "🔴",
+    });
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDeleteAble(false);
+  };
 
   return (
     <Base>
       {memo.map((memoItem: MemoItem) => {
         const { title, content, id } = memoItem;
         return (
-          <ItemWrapper onClick={() => handleView(content, id, title)}>
+          <ItemWrapper onClick={() => handleView(content, id, title)} draggable={true} onDragStart={() => handleDragStart(id)} onDragEnd={() => handleDragEnd()}>
             {title ? <ItemTitle>{title}</ItemTitle> : undefined}
             <ItemContent dangerouslySetInnerHTML={content ? { __html: content?.replaceAll(" ", "&nbsp;").replaceAll("\n", "<br />") } : undefined}></ItemContent>
             <ItemCreated></ItemCreated>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                id && handleDelete(id);
-                toast("삭제되었습니다!", {
-                  icon: "🔴",
-                });
-              }}
-            >
-              삭제
-            </button>
           </ItemWrapper>
         );
       })}
       {activeDetail && <TuiViewer title={activeTitle} id={activeId} show={animation} className="viewer" content={activeDetail} selector="#portal" setAni={setAnimation} />}
       <AddBtn onClick={() => setAddModal(true)}>추가</AddBtn>
       <AddMemo />
+      <TrashBinWrapper /* onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} */>
+        {showTrashBin && (
+          <TrashBinItem
+            deleteAble={deleteAble}
+            onDragLeave={handleDragLeave}
+            onDragOver={(e: React.DragEvent<HTMLDivElement>) => handleDragOver(e)}
+            onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e)}
+          >
+            <GoTrashcan />
+          </TrashBinItem>
+        )}
+      </TrashBinWrapper>
     </Base>
   );
 };
@@ -115,6 +154,20 @@ const ItemWrapper = styled.div`
   gap: 10px;
   position: relative;
   user-select: none;
+  &:hover:before {
+    width: 100%;
+    /* border-radius: 5px 5px 0 0; */
+  }
+  &:before {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 0;
+    width: 10%;
+    height: 3px;
+    background-color: var(--primary-color);
+    transition: all 0.3s;
+  }
 `;
 
 const ItemTitle = styled.div`
@@ -149,6 +202,35 @@ const AddBtn = styled.div`
   align-items: center;
   cursor: pointer;
   z-index: 99;
+`;
+
+const TrashBinWrapper = styled.div`
+  position: absolute;
+  bottom: 15px;
+  width: 100%;
+  height: 20%;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(-50%);
+`;
+
+const TrashBinItem = styled.div<any>`
+  background-color: var(--sub-bgc);
+  padding: 2rem;
+  border-radius: 50%;
+  svg {
+    width: 50px;
+    height: 50px;
+  }
+
+  ${({ deleteAble }) =>
+    deleteAble
+      ? css`
+          color: var(--danger-color);
+        `
+      : css``}
 `;
 
 export default MemoWrapper;

@@ -7,6 +7,7 @@ const defaultStyle = css`
     --main-color: #fff;
     --sub-bgc: #121212;
     --primary-color: #f1c959;
+    --danger-color: #f15972;
   }
 
   * {

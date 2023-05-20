@@ -108,6 +108,7 @@ const Base = styled.form`
   background-color: var(--sub-bgc);
   display: flex;
   flex-direction: column;
+  z-index: 9;
 `;
 
 const TitleWrapper = styled.div`
