@@ -8,6 +8,7 @@ const defaultStyle = css`
     --sub-bgc: #121212;
     --primary-color: #f1c959;
     --danger-color: #f15972;
+    --text-color: #c3c3c3;
   }
 
   * {
@@ -24,6 +25,10 @@ const defaultStyle = css`
   body {
     background-color: var(--main-bgc);
     color: var(--main-color);
+
+    p {
+      color: var(--text-color) !important;
+    }
   }
 `;
 

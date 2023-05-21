@@ -7,14 +7,14 @@ import { AiOutlinePushpin } from "react-icons/ai";
 const Memo = () => {
   return (
     <Base>
-      <MemoHeader>
+      {/* <MemoHeader>
         <MHItem>
           <TiSortAlphabeticallyOutline />
         </MHItem>
         <MHItem>
           <AiOutlinePushpin />
         </MHItem>
-      </MemoHeader>
+      </MemoHeader> */}
       <MemoWrapper />
     </Base>
   );

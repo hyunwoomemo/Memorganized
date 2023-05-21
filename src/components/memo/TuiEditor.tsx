@@ -5,9 +5,10 @@ import { Editor } from "@toast-ui/react-editor";
 interface Props {
   content: string;
   editorRef: React.MutableRefObject<any>;
+  onFocus: any;
 }
 
-const TuiEditor = ({ content = "", editorRef }: Props) => {
+const TuiEditor = ({ content = "", editorRef, onFocus }: Props) => {
   const toolbarItems = [["heading", "bold", "italic", "strike"], ["hr"], ["ul", "ol", "task"], ["table", "link"], ["image"], ["code"]];
 
   return (
@@ -24,6 +25,7 @@ const TuiEditor = ({ content = "", editorRef }: Props) => {
           usageStatistics={false}
           toolbarItems={toolbarItems}
           useCommandShortcut={true}
+          onFocus={onFocus}
         />
       )}
     </>

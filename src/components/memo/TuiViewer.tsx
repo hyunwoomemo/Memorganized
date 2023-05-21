@@ -8,6 +8,8 @@ import { ActiveDetailContext } from "../../context/ActiveDetailContext";
 import { css } from "@emotion/react";
 import UpdateTuiEditor from "./UpdateTuiEditor";
 import UpdateMemo from "./UpdateMemo";
+import { FiEdit } from "react-icons/fi";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 
 interface Props {
   content: string;
@@ -17,9 +19,10 @@ interface Props {
   setAni: any;
   id: any;
   title: any;
+  category: string;
 }
 
-const TuiViewer = ({ content, selector = "#portal", show, setAni, id, title }: Props) => {
+const TuiViewer = ({ content, selector = "#portal", show, setAni, id, title, category }: Props) => {
   const { activeDetail, setActiveDetail } = useContext(ActiveDetailContext);
 
   const [editMode, setEditMode] = useState(false);
@@ -27,24 +30,36 @@ const TuiViewer = ({ content, selector = "#portal", show, setAni, id, title }: P
     setEditMode(!editMode);
   };
 
-  const ref = useRef<any>();
+  const baseRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (editMode && baseRef.current) {
+      baseRef.current.scrollTo({ top: 0 });
+    }
+  }, [editMode]);
 
   return (
     <Portal selector={selector}>
       <Wrapper show={show}>
         <Overlay></Overlay>
-        <Base>
-          <Update onClick={() => handleUpdate()}>수정하기</Update>
-          {editMode && <UpdateMemo id={id} title={title} content={content} setEditMode={setEditMode} />}
+        <Base editMode={editMode} ref={baseRef}>
+          <Util>
+            {title && <Title>{title}</Title>}
+            {category && <Category>{category}</Category>}
+            <Update onClick={() => handleUpdate()}>
+              <FiEdit />
+            </Update>
+            <Close
+              onClick={() => {
+                setActiveDetail("");
+                setAni(false);
+              }}
+            >
+              <AiOutlineCloseCircle />
+            </Close>
+          </Util>
+          {editMode && <UpdateMemo category={category} id={id} title={title} content={content} setEditMode={setEditMode} />}
           <Viewer initialValue={content || ""} theme="dark" />
-          <Close
-            onClick={() => {
-              setActiveDetail("");
-              setAni(false);
-            }}
-          >
-            닫기
-          </Close>
         </Base>
       </Wrapper>
     </Portal>
@@ -73,7 +88,7 @@ const Overlay = styled.div`
   background-color: #00000086;
 `;
 
-const Base = styled.div`
+const Base = styled.div<{ editMode: boolean }>`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -84,17 +99,80 @@ const Base = styled.div`
   height: 90vmin;
   background-color: var(--sub-bgc);
   color: var(--main-text);
-  overflow-y: scroll;
 
+  border-radius: 10px;
   transition: all 0.3s;
+
+  ${({ editMode }) =>
+    editMode
+      ? css`
+          overflow-y: hidden;
+        `
+      : css`
+          overflow-y: scroll;
+        `}
 `;
 
-const Close = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
+const Title = styled.div`
+  font-size: 20px;
+  padding: 1rem 0;
+  flex: 1 1 auto;
 `;
 
-const Update = styled.div``;
+const Category = styled.div`
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background-color: var(--main-bgc);
+`;
+
+const Util = styled.div`
+  display: flex;
+  min-height: 60px;
+  justify-content: flex-end;
+  font-size: 20px;
+  gap: 1rem;
+  align-items: center;
+
+  > div:hover {
+    color: var(--primary-color);
+  }
+`;
+
+const UtilItem = styled.div`
+  cursor: pointer;
+  position: relative;
+
+  &:before {
+    position: absolute;
+    font-size: 12px;
+    bottom: 120%;
+    white-space: nowrap;
+    padding: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: all 0.3s;
+    background-color: var(--primary-color);
+    border-radius: 10px;
+  }
+
+  &:hover:before {
+    color: #000;
+    opacity: 1;
+  }
+`;
+
+const Close = styled(UtilItem)`
+  &:before {
+    content: "닫기";
+  }
+`;
+
+const Update = styled(UtilItem)`
+  &:before {
+    content: "수정";
+  }
+`;
 
 export default TuiViewer;

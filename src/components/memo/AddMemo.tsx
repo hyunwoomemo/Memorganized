@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useContext, useRef, useEffect } from "react";
+import React, { useContext, useRef, useEffect, useState } from "react";
 import Portal from "../common/Portal";
 import { AddContext } from "../../context/AddContext";
 import { gsap } from "gsap";
@@ -10,6 +10,8 @@ import { db } from "../../service/firbase";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { UserContext } from "../../context/UserContext";
+import { ActiveDetailContext } from "../../context/ActiveDetailContext";
+import CategoryModal from "./CategoryModal";
 
 const AddMemo = ({ selector = "#portal" }) => {
   const { addModal, setAddModal } = useContext(AddContext);
@@ -50,7 +52,12 @@ const AddMemo = ({ selector = "#portal" }) => {
     setAddModal(false);
     reset({ title: "" });
     resetEditorValue();
+    categoryInputRef.current.value = "";
+    setCategorySearch("");
+    setShowCategoryModal(false);
   };
+
+  // 데이터 저장
 
   const handleSave = handleSubmit(async (data) => {
     try {
@@ -58,15 +65,23 @@ const AddMemo = ({ selector = "#portal" }) => {
       // 에디터 작성 내용 markdown으로 저장
       const contentHTML = editorIns.getHTML();
 
+      const contentLength = contentHTML.replaceAll("p", "").replaceAll("br", "").replaceAll("<", "").replaceAll(">", "").replaceAll("/", "")?.length === 0;
+
       // contentMark 길이 체크
-      if (contentHTML.replaceAll("p", "").replaceAll("br", "").replaceAll("<", "").replaceAll(">", "").replaceAll("/", "")?.length === 0) {
+      if (contentLength) {
         toast.error("글을 작성해주세요");
         return;
       }
 
+      /* if (!data.category) {
+        toast.error("카테고리를 선택해주세요.");
+        return;
+      } */
+
       // add firestore
       await addDoc(collection(db, "memos"), {
         title: data.title,
+        category: categoryInputRef.current.value,
         content: contentHTML,
         createdAt: new Date(),
         userId: user.uid,
@@ -74,11 +89,34 @@ const AddMemo = ({ selector = "#portal" }) => {
 
       toast.success("메모를 추가했습니다.");
       handleClose();
+      categoryInputRef.current.value = "";
+      setCategorySearch("");
+      setShowCategoryModal(false);
     } catch (e) {
-      console.log(e);
       toast.error(`${e}` || "다시 시도해주세요.");
     }
   });
+
+  /* 카테고리 추가 및 적용
+    - 인풋창 focus 되면 firebase에서 category들 불러오기
+    - 카테고리 선택하면 input value로 입력
+    - (수동) 대분류 중분류 인풋에 값을 적어서 firebase에 넘겨주기 + input value 입력
+  */
+
+  // 카테고리 모달 관리
+
+  // 카테고리 모달 보여주기
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+
+  // 카테고리 인풋
+  const categoryInputRef = useRef<any>(null);
+
+  // 카테고리 onChange 로 모달 필터
+  const [categorySearch, setCategorySearch] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCategorySearch(e.target.value);
+  };
 
   return (
     <Portal selector={selector}>
@@ -89,9 +127,15 @@ const AddMemo = ({ selector = "#portal" }) => {
         <Overlay></Overlay>
         <Base onSubmit={handleSave}>
           <TitleWrapper>
-            <TitleInput {...register("title")} placeholder="제목을 입력해주세요"></TitleInput>
+            <TitleInput onFocus={() => setShowCategoryModal(false)} {...register("title")} placeholder="제목을 입력해주세요 (선택)"></TitleInput>
           </TitleWrapper>
-          <TuiEditor content="" editorRef={ref} />
+          <CategoryWrapper>
+            <CategoryInput onChange={(e) => handleChange(e)} onFocus={() => setShowCategoryModal(true)} autoComplete="off" ref={categoryInputRef} placeholder="카테고리 (선택)"></CategoryInput>
+            {showCategoryModal && (
+              <CategoryModal setCategorySearch={setCategorySearch} categorySearch={categorySearch} categoryInputRef={categoryInputRef} setShowCategoryModal={setShowCategoryModal} />
+            )}
+          </CategoryWrapper>
+          <TuiEditor content="" editorRef={ref} onFocus={() => setShowCategoryModal(false)} />
           <Footer>
             <GoBack onClick={handleClose}>닫기</GoBack>
             <SubMit type="submit">작성하기</SubMit>
@@ -144,6 +188,19 @@ const TitleInput = styled.input`
   outline: none;
 `;
 
+const CategoryWrapper = styled.div`
+  padding: 1rem;
+  position: relative;
+`;
+
+const CategoryInput = styled.input`
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  color: var(--main-color);
+  outline: none;
+`;
+
 const Footer = styled.div`
   display: flex;
   width: 100%;
@@ -170,6 +227,7 @@ const SubMit = styled.button`
   border: 0;
   color: var(--main-text);
   cursor: pointer;
+  position: relative;
 `;
 
 export default AddMemo;

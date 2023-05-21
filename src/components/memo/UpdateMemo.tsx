@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useContext, useRef, useEffect } from "react";
+import React, { useContext, useRef, useEffect, useState } from "react";
 import Portal from "../common/Portal";
 import { AddContext } from "../../context/AddContext";
 import { gsap } from "gsap";
@@ -12,6 +12,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { UserContext } from "../../context/UserContext";
 import UpdateTuiEditor from "./UpdateTuiEditor";
 import { ActiveDetailContext } from "../../context/ActiveDetailContext";
+import CategoryModal from "./CategoryModal";
 
 type Update = {
   selector?: string;
@@ -19,9 +20,10 @@ type Update = {
   setEditMode: any;
   id: any;
   title: any;
+  category: any;
 };
 
-const UpdateMemo = ({ content, setEditMode, id, title }: Update) => {
+const UpdateMemo = ({ content, setEditMode, id, title, category }: Update) => {
   const { user } = useContext(UserContext);
   const { setActiveDetail } = useContext(ActiveDetailContext);
 
@@ -53,6 +55,7 @@ const UpdateMemo = ({ content, setEditMode, id, title }: Update) => {
         content: contentHTML,
         createdAt: new Date(),
         userId: user.uid,
+        category: categoryInputRef.current.value,
       });
 
       toast.success("메모를 수정했습니다.");
@@ -64,6 +67,19 @@ const UpdateMemo = ({ content, setEditMode, id, title }: Update) => {
     }
   });
 
+  // 카테고리 모달 보여주기
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+
+  // 카테고리 인풋
+  const categoryInputRef = useRef<any>(null);
+
+  // 카테고리 onChange 로 모달 필터
+  const [categorySearch, setCategorySearch] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCategorySearch(e.target.value);
+  };
+
   return (
     <>
       <div>
@@ -73,8 +89,21 @@ const UpdateMemo = ({ content, setEditMode, id, title }: Update) => {
         <Overlay></Overlay>
         <Base onSubmit={handleUpdate}>
           <TitleWrapper>
-            <TitleInput {...register("title")} placeholder="제목을 입력해주세요" defaultValue={title}></TitleInput>
+            <TitleInput {...register("title")} placeholder="제목을 입력해주세요 (선택)" defaultValue={title}></TitleInput>
           </TitleWrapper>
+          <CategoryWrapper>
+            <CategoryInput
+              defaultValue={category}
+              onChange={(e) => handleChange(e)}
+              onFocus={() => setShowCategoryModal(true)}
+              autoComplete="off"
+              ref={categoryInputRef}
+              placeholder="카테고리 (선택)"
+            ></CategoryInput>
+            {showCategoryModal && (
+              <CategoryModal setCategorySearch={setCategorySearch} categorySearch={categorySearch} categoryInputRef={categoryInputRef} setShowCategoryModal={setShowCategoryModal} />
+            )}
+          </CategoryWrapper>
           <UpdateTuiEditor content={content} editorRef={ref} />
           <Footer>
             <GoBack onClick={() => setEditMode(false)}>닫기</GoBack>
@@ -123,6 +152,20 @@ const TitleInput = styled.input`
   border: 0;
   background: none;
   color: var(--main-color);
+  outline: none;
+`;
+
+const CategoryWrapper = styled.div`
+  padding: 1rem;
+  position: relative;
+`;
+
+const CategoryInput = styled.input`
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  color: var(--main-color);
+  outline: none;
 `;
 
 const Footer = styled.div`

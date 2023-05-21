@@ -10,11 +10,15 @@ import { AddContext } from "./context/AddContext";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AddMemo from "./components/memo/AddMemo";
 import { ActiveDetailContext } from "./context/ActiveDetailContext";
+import { CategoryContext } from "./context/CategoryContext";
+import { FilterCategory } from "./context/FilterCategory";
 
 function App() {
   const [user, setUser] = useState(null);
   const [addModal, setAddModal] = useState(false);
   const [activeDetail, setActiveDetail] = useState("");
+  const [category, setCategory] = useState([]);
+  const [filterCategory, setFilterCategory] = useState("전체");
   console.log(user);
 
   useEffect(() => {
@@ -28,14 +32,18 @@ function App() {
       <UserContext.Provider value={{ user }}>
         <AddContext.Provider value={{ addModal, setAddModal }}>
           <ActiveDetailContext.Provider value={{ activeDetail, setActiveDetail }}>
-            <Base>
-              <ResetStyle />
-              <GlobalStyle />
-              {user ? <Layout user={user} /> : <Login></Login>}
-              <Routes>
-                <Route path="add-memo" element={<AddMemo />} />
-              </Routes>
-            </Base>
+            <CategoryContext.Provider value={{ category, setCategory }}>
+              <FilterCategory.Provider value={{ filterCategory, setFilterCategory }}>
+                <Base>
+                  <ResetStyle />
+                  <GlobalStyle />
+                  {user ? <Layout user={user} /> : <Login></Login>}
+                  <Routes>
+                    <Route path="add-memo" element={<AddMemo />} />
+                  </Routes>
+                </Base>
+              </FilterCategory.Provider>
+            </CategoryContext.Provider>
           </ActiveDetailContext.Provider>
         </AddContext.Provider>
       </UserContext.Provider>

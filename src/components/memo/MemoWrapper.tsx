@@ -11,13 +11,18 @@ import TuiViewer from "./TuiViewer";
 import { ActiveDetailContext } from "../../context/ActiveDetailContext";
 import { toast } from "react-hot-toast";
 import { GoTrashcan } from "react-icons/go";
+import "@toast-ui/editor/dist/toastui-editor-viewer.css";
+import Previewr from "./Previewr";
+import { IoIosAddCircle } from "react-icons/io";
+import { FilterCategory } from "../../context/FilterCategory";
 
 type MemoItem = {
   title?: string | null;
   content?: any;
   id?: any;
-  createdAt?: number;
+  createdAt?: any;
   userId?: string;
+  category?: string;
 };
 
 const MemoWrapper = () => {
@@ -32,9 +37,13 @@ const MemoWrapper = () => {
     }
   };
 
-  type Memo = {};
+  type Memo = {
+    category?: string;
+    id: string;
+  };
 
   const [memo, setMemo] = useState<Memo[]>([]);
+  console.log(memo);
 
   useEffect(() => {
     const q = query(collection(db, "memos"), orderBy("createdAt", "desc"), where("userId", "==", user.uid));
@@ -43,27 +52,30 @@ const MemoWrapper = () => {
         id: doc.id,
         ...doc.data(),
       }));
-      console.log(memosArray);
       setMemo(memosArray);
     });
 
     return () => unsubscribe();
   }, []);
 
+  console.log(memo);
+
   const { setAddModal } = useContext(AddContext);
 
   const { activeDetail, setActiveDetail } = useContext(ActiveDetailContext);
   const [activeId, setActiveId] = useState();
   const [activeTitle, setActiveTitle] = useState("");
+  const [activeCategory, setActiveCategory] = useState("");
   const [animation, setAnimation] = useState(false);
 
-  const handleView = (content: any, id: any, title: any) => {
+  const handleView = (content: any, id: any, title: any, category: any) => {
     setActiveDetail(content);
     setTimeout(() => {
       setAnimation(true);
     }, 100);
     setActiveId(id);
     setActiveTitle(title);
+    setActiveCategory(category);
   };
 
   // 드래그 앤 드랍 삭제 기능 구현
@@ -92,12 +104,8 @@ const MemoWrapper = () => {
     draggedMemo && handleDelete(draggedMemo);
     setDeleteAble(false);
     toast("삭제되었습니다!", {
-      icon: "🔴",
+      icon: "🗑️",
     });
-  };
-
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
@@ -105,22 +113,41 @@ const MemoWrapper = () => {
     setDeleteAble(false);
   };
 
+  // filter category
+
+  const { filterCategory } = useContext(FilterCategory);
+
+  console.log(filterCategory);
+
+  const filterMemo = memo.filter((v) => (filterCategory === "전체" ? v : v.category === filterCategory));
+  console.log(filterMemo);
+
   return (
     <Base>
-      {memo.map((memoItem: MemoItem) => {
-        const { title, content, id } = memoItem;
+      {filterMemo.map((memoItem: MemoItem) => {
+        const { title, content, id, createdAt, category } = memoItem;
+
+        const { seconds } = createdAt;
+
+        const date = new Date(seconds * 1000).toLocaleDateString();
+        console.log(date);
         return (
-          <ItemWrapper onClick={() => handleView(content, id, title)} draggable={true} onDragStart={() => handleDragStart(id)} onDragEnd={() => handleDragEnd()}>
-            {title ? <ItemTitle>{title}</ItemTitle> : undefined}
-            <ItemContent dangerouslySetInnerHTML={content ? { __html: content?.replaceAll(" ", "&nbsp;").replaceAll("\n", "<br />") } : undefined}></ItemContent>
-            <ItemCreated></ItemCreated>
+          <ItemWrapper key={id} onClick={() => handleView(content, id, title, category)} draggable={true} onDragStart={() => handleDragStart(id)} onDragEnd={() => handleDragEnd()}>
+            {title && <ItemTitle>{title}</ItemTitle>}
+            {content && <Previewr content={content} />}
+            <Footer>
+              {category && <CategoryItem>{category}</CategoryItem>}
+              <Create>{date}</Create>
+            </Footer>
           </ItemWrapper>
         );
       })}
-      {activeDetail && <TuiViewer title={activeTitle} id={activeId} show={animation} className="viewer" content={activeDetail} selector="#portal" setAni={setAnimation} />}
-      <AddBtn onClick={() => setAddModal(true)}>추가</AddBtn>
+      {activeDetail && <TuiViewer category={activeCategory} title={activeTitle} id={activeId} show={animation} className="viewer" content={activeDetail} selector="#portal" setAni={setAnimation} />}
+      <AddBtn onClick={() => setAddModal(true)}>
+        <IoIosAddCircle />
+      </AddBtn>
       <AddMemo />
-      <TrashBinWrapper /* onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} */>
+      <TrashBinWrapper showTrashBin={showTrashBin}>
         {showTrashBin && (
           <TrashBinItem
             deleteAble={deleteAble}
@@ -145,7 +172,7 @@ const Base = styled.div`
 `;
 
 const ItemWrapper = styled.div`
-  min-height: 200px;
+  height: 200px;
   background-color: #121212;
   border-radius: 5px;
   padding: 1rem;
@@ -154,16 +181,16 @@ const ItemWrapper = styled.div`
   gap: 10px;
   position: relative;
   user-select: none;
+  cursor: pointer;
   &:hover:before {
     width: 100%;
-    /* border-radius: 5px 5px 0 0; */
   }
   &:before {
     content: "";
     position: absolute;
     top: 1px;
     left: 0;
-    width: 10%;
+    width: 5%;
     height: 3px;
     background-color: var(--primary-color);
     transition: all 0.3s;
@@ -176,35 +203,41 @@ const ItemTitle = styled.div`
   padding: 10px 0;
 `;
 
-const ItemContent = styled.div`
-  line-height: 30px;
-
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
-  word-wrap: break-word;
+const Footer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: auto;
 `;
 
-const ItemCreated = styled.div``;
+const CategoryItem = styled.div`
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background-color: var(--main-bgc);
+  align-self: flex-start;
+`;
+
+const Create = styled.div`
+  font-size: 14px;
+  color: gray;
+`;
 
 const AddBtn = styled.div`
   position: absolute;
   bottom: 30px;
   right: 30px;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background-color: gray;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
-  z-index: 99;
+  font-size: 60px;
+  color: #3e3e3e;
+
+  &:hover {
+    color: var(--primary-color);
+  }
 `;
 
-const TrashBinWrapper = styled.div`
+const TrashBinWrapper = styled.div<{ showTrashBin: boolean }>`
   position: absolute;
   bottom: 15px;
   width: 100%;
@@ -214,6 +247,18 @@ const TrashBinWrapper = styled.div`
   justify-content: center;
   align-items: center;
   transform: translateX(-50%);
+  transition: all 0.3s;
+
+  ${({ showTrashBin }) =>
+    showTrashBin
+      ? css`
+          pointer-events: all;
+          opacity: 1;
+        `
+      : css`
+          pointer-events: none;
+          opacity: 0;
+        `}
 `;
 
 const TrashBinItem = styled.div<any>`

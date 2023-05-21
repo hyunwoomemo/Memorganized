@@ -1,14 +1,49 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "@emotion/styled";
 import { FaCube } from "react-icons/fa";
 import Search from "./Search";
 import { signOut } from "../../service/firbase";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "../../service/firbase";
+import { CategoryContext } from "../../context/CategoryContext";
+import { FilterCategory } from "../../context/FilterCategory";
+import { css } from "@emotion/react";
+
+type Category = {
+  name: string;
+  id: string;
+};
 
 const Sidebar = ({ user }: any) => {
   const [showLogout, setShowLogout] = React.useState<boolean>(false);
   const handleLogout = (e: React.MouseEvent) => {
     setShowLogout(!showLogout);
   };
+
+  const { category, setCategory } = useContext(CategoryContext);
+
+  useEffect(() => {
+    const q = query(collection(db, "memos"), where("userId", "==", user.uid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const categories = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().category,
+      }));
+      setCategory(categories);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const categoryNameArray = category.map((v: any) => v.name);
+  const uniqueCategory = category.map((v: any) => v.name).filter((v1: never, i: number, arr: []) => arr.indexOf(v1) === i);
+  const { filterCategory, setFilterCategory } = useContext(FilterCategory);
+  const [active, setActive] = useState("전체");
+
+  useEffect(() => {
+    setActive(filterCategory);
+  }, [filterCategory]);
+
   return (
     <Base>
       <Container>
@@ -17,6 +52,16 @@ const Sidebar = ({ user }: any) => {
           Memorganized
         </Title>
         <Search />
+        <CategoryWrapper>
+          <CategoryItem active={active === "전체"} onClick={() => setFilterCategory("전체")}>{`전체 (${categoryNameArray.length})`}</CategoryItem>
+          {uniqueCategory.map((item: string) => {
+            return (
+              <CategoryItem active={active === item} onClick={() => setFilterCategory(item)} key={item}>{`${item === "" ? "미분류" : item} (${
+                categoryNameArray.filter((v: any) => v === item).length
+              })`}</CategoryItem>
+            );
+          })}
+        </CategoryWrapper>
       </Container>
       <Footer>
         <Profile src={user.photoURL} alt="" onClick={handleLogout} />
@@ -47,6 +92,30 @@ const Title = styled.h1`
   display: flex;
   gap: 10px;
   align-items: center;
+`;
+
+const CategoryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: scroll;
+`;
+
+const CategoryItem = styled.div<{ active: boolean }>`
+  padding: 1rem;
+  background-color: var(--sub-bgc);
+  border-radius: 5px;
+  cursor: pointer;
+  &:hover {
+    color: var(--primary-color);
+  }
+
+  ${({ active }) =>
+    active
+      ? css`
+          color: var(--primary-color);
+        `
+      : undefined}
 `;
 
 const Footer = styled.div`
