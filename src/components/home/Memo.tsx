@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import MemoWrapper from "../memo/MemoWrapper";
 import { FaCube } from "react-icons/fa";
@@ -8,6 +8,30 @@ import { AddContext } from "../../context/AddContext";
 import Search from "./Search";
 import { toast } from "react-hot-toast";
 
+interface BeforeInstallPromptEvent extends Event {
+  /**
+   * Returns an array of DOMString items containing the platforms on which the event was dispatched.
+   * This is provided for user agents that want to present a choice of versions to the user such as,
+   * for example, "web" or "play" which would allow the user to chose between a web version or
+   * an Android version.
+   */
+  readonly platforms: Array<string>;
+
+  /**
+   * Returns a Promise that resolves to a DOMString containing either "accepted" or "dismissed".
+   */
+  readonly userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
+
+  /**
+   * Allows a developer to show the install prompt at a time of their own choosing.
+   * This method returns a Promise.
+   */
+  prompt(): Promise<void>;
+}
+
 const Memo = () => {
   const { showSidebar, setShowSidebar } = useContext(ShowSidebar);
   const { setAddModal } = useContext(AddContext);
@@ -15,39 +39,40 @@ const Memo = () => {
     setShowSidebar(true);
   };
 
-  let deferredPrompt: any;
+  useEffect(() => {
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
-  window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    deferredPrompt = event;
-  });
-
-  const installApp = () => {
-    if (!deferredPrompt) {
-      alert("이미 앱이 설치되어 있거나 앱을 설치할 수 없는 환경입니다");
-      return;
-    }
-
-    deferredPrompt.prompt();
-  };
-
-  React.useEffect(() => {
-    toast(
-      (t) => (
-        <span>
-          Custom and <b>bold</b>
-          <button onClick={installApp}>설치</button>
-          <button onClick={() => toast.dismiss(t.id)}>Dismiss</button>
-        </span>
-      ),
-      {
-        duration: 10000,
-      }
-    );
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
   }, []);
 
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+
+  const handleBeforeInstallPrompt = (event: any) => {
+    event.preventDefault();
+
+    setDeferredPrompt(event);
+  };
+
+  const handleInstall = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("사용자가 앱 설치를 동의했습니다.");
+        } else {
+          console.log("사용자가 앱 설치를 동의하지 않았습니다.");
+        }
+
+        setDeferredPrompt(null);
+      });
+    }
+  };
+
   return (
-    <>
+    <Container>
       <Overlay showSidebar={showSidebar} onClick={() => setShowSidebar(false)}></Overlay>
       <Base showSidebar={showSidebar}>
         <MainHeader>
@@ -59,19 +84,31 @@ const Memo = () => {
         </MainHeader>
         <Header>
           <Btn>
-            <InstallBtn onClick={() => installApp()}>앱 설치하기</InstallBtn>
+            <InstallBtn onClick={() => handleInstall()}>앱 설치하기</InstallBtn>
             <AddBtn onClick={() => setAddModal(true)}>메모 추가하기</AddBtn>
           </Btn>
         </Header>
         <MemoWrapper />
       </Base>
-    </>
+    </Container>
   );
 };
 
-const Overlay = styled.div<{ showSidebar: boolean }>`
+const Container = styled.div`
   width: 100vw;
   height: 100vh;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
+const Overlay = styled.div<{ showSidebar: boolean }>`
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
   background-color: #000;
   opacity: 0.5;
   position: absolute;
@@ -90,8 +127,8 @@ const Overlay = styled.div<{ showSidebar: boolean }>`
 `;
 
 const Base = styled.div<{ showSidebar: boolean }>`
-  padding: 2rem;
-  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
   position: relative;
 
   ${({ showSidebar }) =>
@@ -103,10 +140,10 @@ const Base = styled.div<{ showSidebar: boolean }>`
 `;
 
 const MainHeader = styled.div`
+  width: 100%;
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
   justify-content: space-between;
-  position: sticky;
   top: 0;
   background-color: #000;
   z-index: 3;

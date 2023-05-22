@@ -61,6 +61,11 @@ const Sidebar = ({ user }: any) => {
 
   const { showSidebar } = useContext(ShowSidebar);
 
+  const [hideCategory, setHideCategory] = useState(true);
+  const handleCategory = () => {
+    setHideCategory(!hideCategory);
+  };
+
   return (
     <Base screenWidth={screenWidth} showSidebar={showSidebar}>
       <Container>
@@ -69,7 +74,8 @@ const Sidebar = ({ user }: any) => {
           Memorganized
         </Title>
         <Search loc="sidebar" />
-        <CategoryWrapper>
+        <Category onClick={handleCategory}>📚 Category</Category>
+        <CategoryWrapper hideCategory={hideCategory}>
           <CategoryItem
             active={active === "전체" && !searchMemo}
             onClick={() => {
@@ -80,6 +86,7 @@ const Sidebar = ({ user }: any) => {
           {uniqueCategory.map((item: string) => {
             return (
               <CategoryItem
+                style={{ paddingLeft: "10px" }}
                 active={active === item && !searchMemo}
                 onClick={(e) => {
                   setFilterCategory(item);
@@ -125,7 +132,6 @@ const Base = styled.div<{ screenWidth: number; showSidebar: boolean }>`
   z-index: 5;
   background-color: var(--main-bgc);
   transition: all 0.3s;
-
   border-right: 1px solid #ffffff2b;
 `;
 
@@ -145,17 +151,31 @@ const Title = styled.h1`
   align-items: center;
 `;
 
-const CategoryWrapper = styled.div`
+const Category = styled.div`
+  cursor: pointer;
+`;
+
+const CategoryWrapper = styled.div<{ hideCategory: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  overflow-x: hidden;
   overflow-y: scroll;
+  word-break: break-all;
+  transform-origin: 0 0;
+  transition: transform 0.3s;
+
+  ${({ hideCategory }) =>
+    hideCategory
+      ? css`
+          transform: scaleY(0);
+        `
+      : css`
+          transform: scaleY(1);
+        `}
 `;
 
 const CategoryItem = styled.div<{ active: boolean }>`
-  padding: 1rem;
-  background-color: var(--sub-bgc);
-  border-radius: 5px;
   cursor: pointer;
   &:hover {
     color: var(--primary-color);
@@ -194,6 +214,11 @@ const Button = styled.button`
   color: var(--main-text);
   padding: 3px 5px;
   border-radius: 5px;
+  white-space: nowrap;
+  cursor: pointer;
+  &:hover {
+    color: var(--danger-color);
+  }
 `;
 
 export default Sidebar;

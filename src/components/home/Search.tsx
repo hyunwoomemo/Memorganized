@@ -21,6 +21,7 @@ const Search: React.FC<SearchProps> = ({ loc }) => {
 
 const Base = styled.div<{ loc?: string }>`
   padding: 1rem 0;
+  width: 100%;
 
   ${({ loc }) =>
     loc === "main"
@@ -46,6 +47,7 @@ const Base = styled.div<{ loc?: string }>`
     border-radius: 10px;
     color: var(--main-color);
     padding: 10px;
+    width: 100%;
 
     &:focus {
       border: 2px solid var(--primary-color);

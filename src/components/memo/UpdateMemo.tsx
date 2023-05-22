@@ -77,9 +77,6 @@ const UpdateMemo = ({ content, setEditMode, id, title, category }: Update) => {
 
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
       <Wrapper className="wrapper">
         <Overlay></Overlay>
         <Base onSubmit={handleUpdate}>

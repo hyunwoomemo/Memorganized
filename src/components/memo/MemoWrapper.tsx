@@ -177,14 +177,19 @@ const ItemWrapper = styled.div`
   gap: 10px;
   position: relative;
   flex: 1 1 auto;
-
   cursor: pointer;
+  overflow: hidden;
 `;
 
 const ItemTitle = styled.div`
   font-size: 18px;
   border-bottom: 1px solid #ffffff3c;
   padding: 10px 0;
+
+  max-width: 500px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const Footer = styled.div`
@@ -201,24 +206,27 @@ const CategoryItem = styled.div`
   border-radius: 5px;
   background-color: var(--main-bgc);
   align-self: flex-start;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const Create = styled.div`
   font-size: 14px;
   color: gray;
+  white-space: nowrap;
 `;
 
 const TrashBinWrapper = styled.div<{ showTrashBin: boolean }>`
-  position: absolute;
+  position: fixed;
   bottom: 15px;
   width: 100%;
   height: 20%;
-  left: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: translateX(-50%);
   transition: all 0.3s;
+  left: 0;
 
   ${({ showTrashBin }) =>
     showTrashBin
@@ -233,7 +241,7 @@ const TrashBinWrapper = styled.div<{ showTrashBin: boolean }>`
 `;
 
 const TrashBinItem = styled.div<any>`
-  background-color: var(--sub-bgc);
+  background-color: var(--danger-color);
   padding: 2rem;
   border-radius: 50%;
   svg {
@@ -244,7 +252,7 @@ const TrashBinItem = styled.div<any>`
   ${({ deleteAble }) =>
     deleteAble
       ? css`
-          color: var(--danger-color);
+          background-color: red;
         `
       : css``}
 `;

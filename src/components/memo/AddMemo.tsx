@@ -103,9 +103,9 @@ const AddMemo = ({ selector = "#portal" }) => {
 
   return (
     <Portal selector={selector}>
-      <div>
+      <Toast>
         <Toaster />
-      </div>
+      </Toast>
       <Wrapper show={addModal}>
         <Overlay></Overlay>
         <Base onSubmit={handleSave}>
@@ -220,6 +220,10 @@ const SubMit = styled.button`
   cursor: pointer;
   position: relative;
   border-radius: 0 0 5px 0;
+`;
+
+const Toast = styled.div`
+  z-index: 999;
 `;
 
 export default AddMemo;
