@@ -170,7 +170,7 @@ const Base = styled.div`
 `;
 
 const ItemWrapper = styled.div`
-  height: 200px;
+  max-height: 200px;
   background-color: #121212;
   border-radius: 5px;
   padding: 1rem;

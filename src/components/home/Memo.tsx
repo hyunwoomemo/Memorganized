@@ -4,8 +4,8 @@ import MemoWrapper from "../memo/MemoWrapper";
 import { FaCube } from "react-icons/fa";
 import { ShowSidebar } from "../../context/ShowSidebar";
 import { css } from "@emotion/react";
-import { IoIosAddCircle } from "react-icons/io";
 import { AddContext } from "../../context/AddContext";
+import Search from "./Search";
 
 const Memo = () => {
   const { showSidebar, setShowSidebar } = useContext(ShowSidebar);
@@ -21,13 +21,12 @@ const Memo = () => {
           <FaCube />
           Memorganized
         </Title>
-        <MemoWrapper />
-        <CallToAction>
+        <Header>
+          <Search />
           <InstallBtn>앱 설치하기</InstallBtn>
-          <AddBtn onClick={() => setAddModal(true)}>
-            <IoIosAddCircle />
-          </AddBtn>
-        </CallToAction>
+          <AddBtn onClick={() => setAddModal(true)}>메모 추가하기</AddBtn>
+        </Header>
+        <MemoWrapper />
       </Base>
     </>
   );
@@ -65,26 +64,23 @@ const Base = styled.div<{ showSidebar: boolean }>`
       : css``}
 `;
 
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
 const Title = styled.h1`
   font-size: 18px;
   display: flex;
   gap: 10px;
   align-items: center;
   cursor: pointer;
-
+  padding: 1rem 0;
   @media (min-width: 768px) {
     display: none;
   }
 `;
-
-const CallToAction = styled.div`
-  position: fixed;
-  bottom: 2rem;
-  display: flex;
-  width: 100%;
-  align-items: center;
-`;
-
 const InstallBtn = styled.div`
   display: flex;
   background-color: #1c1c1c;
@@ -93,6 +89,7 @@ const InstallBtn = styled.div`
   align-items: center;
   border-radius: 25px;
   color: var(--primary-color);
+  margin-left: auto;
   cursor: pointer;
 
   &:hover {
@@ -101,15 +98,14 @@ const InstallBtn = styled.div`
 `;
 
 const AddBtn = styled.div`
-  position: fixed;
-  right: 1rem;
   cursor: pointer;
-  font-size: 60px;
-  color: #3e3e3e;
-  backdrop-filter: blur(3px);
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  color: var(--primary-color);
+  background-color: #1c1c1c;
 
   &:hover {
-    color: var(--primary-color);
+    background-color: #2d2d2d;
   }
 `;
 
