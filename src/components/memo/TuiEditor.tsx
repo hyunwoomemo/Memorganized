@@ -9,7 +9,7 @@ interface Props {
 }
 
 const TuiEditor = ({ content = "", editorRef, onFocus }: Props) => {
-  const toolbarItems = [["heading", "bold", "italic", "strike"], ["hr"], ["ul", "ol", "task"], ["table", "link"], ["image"], ["code"]];
+  const toolbarItems = [["heading", "bold", "italic", "strike"], ["hr"], ["ul", "ol"], ["table", "link"], ["image"], ["code"]];
 
   return (
     <>

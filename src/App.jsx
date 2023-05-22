@@ -14,6 +14,7 @@ import { CategoryContext } from "./context/CategoryContext";
 import { FilterCategory } from "./context/FilterCategory";
 import { SearchMemo } from "./context/SearchMemo";
 import { ShowSidebar } from "./context/ShowSidebar";
+import Home from "./components/page/Home";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -46,9 +47,7 @@ function App() {
                       <ResetStyle />
                       <GlobalStyle />
                       {user ? <Layout user={user} /> : <Login></Login>}
-                      <Routes>
-                        <Route path="add-memo" element={<AddMemo />} />
-                      </Routes>
+                      <Routes></Routes>
                     </Base>
                   </ShowSidebar.Provider>
                 </SearchMemo.Provider>

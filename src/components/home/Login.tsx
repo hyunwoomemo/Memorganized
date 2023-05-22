@@ -8,7 +8,7 @@ const Login = () => {
     <Base>
       <Title>
         <FaCube />
-        Memorganize
+        Memorganized
       </Title>
       <Button onClick={signInGoogle}>
         <FcGoogle />

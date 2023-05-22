@@ -14,6 +14,7 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../service/firbase";
 import { toast } from "react-hot-toast";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { createBrowserHistory } from "history";
 
 interface Props {
   content: string;
@@ -71,7 +72,25 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
 
   const plainText = parsedHTML.body.innerHTML.replace(/<br>/g, "\n").replace(/<\/?[^>]+(>|$)/g, "");
 
-  console.log(plainText);
+  /*  window.addEventListener("popstate", (e) => {
+    e.preventDefault();
+
+    console.log("sdf");
+    setActiveDetail("");
+  });
+
+  useEffect(() => {
+    const handleBackButton = (e: any) => {
+      console.log("back");
+      setActiveDetail("");
+    };
+
+    window.onpopstate = handleBackButton;
+
+    return () => {
+      window.onpopstate = null;
+    };
+  }, []); */
 
   return (
     <Portal selector={selector}>
@@ -101,7 +120,9 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
             </Close>
           </Util>
           {editMode && <UpdateMemo category={category} id={id} title={title} content={content} setEditMode={setEditMode} />}
-          <Viewer initialValue={content || ""} theme="dark" />
+          <ViewerStyle>
+            <Viewer initialValue={content || ""} theme="dark" />
+          </ViewerStyle>
         </Base>
       </Wrapper>
     </Portal>
@@ -134,6 +155,7 @@ const Base = styled.div<{ editMode: boolean }>`
   height: 100vh;
   background-color: var(--sub-bgc);
   color: var(--main-text);
+  padding: 4rem 2rem;
 
   transition: all 0.3s;
 
@@ -149,7 +171,6 @@ const Base = styled.div<{ editMode: boolean }>`
 
 const Title = styled.div`
   font-size: 20px;
-  padding: 1rem 0;
   flex: 1 1 auto;
 `;
 
@@ -168,6 +189,7 @@ const Util = styled.div`
   gap: 1rem;
   align-items: center;
   flex-wrap: wrap;
+  padding: 2rem 0 4rem 0;
 
   > div:hover {
     color: var(--primary-color);
@@ -202,6 +224,11 @@ const UtilItem = styled.div`
     color: #000;
     opacity: 1;
   }
+`;
+
+const ViewerStyle = styled.div`
+  padding: 1rem;
+  background-color: #2b2b2b;
 `;
 
 const Copy = styled(UtilItem)`

@@ -179,12 +179,18 @@ const ItemWrapper = styled.div`
   flex: 1 1 auto;
   cursor: pointer;
   overflow: hidden;
+  transition: transform 0.3s;
+
+  @media (min-width: 768px) {
+    &:hover {
+    }
+  }
 `;
 
 const ItemTitle = styled.div`
   font-size: 18px;
   border-bottom: 1px solid #ffffff3c;
-  padding: 10px 0;
+  padding: 1rem 0;
 
   max-width: 500px;
   overflow: hidden;
