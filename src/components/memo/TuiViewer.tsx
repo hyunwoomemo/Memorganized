@@ -155,7 +155,7 @@ const Base = styled.div<{ editMode: boolean }>`
   height: 100vh;
   background-color: var(--sub-bgc);
   color: var(--main-text);
-  padding: 4rem 2rem;
+  padding: 4rem 0 0;
 
   transition: all 0.3s;
 
@@ -179,6 +179,7 @@ const Category = styled.span`
   padding: 4px 8px;
   border-radius: 5px;
   background-color: var(--main-bgc);
+  margin: 0 2rem;
 `;
 
 const Util = styled.div`
@@ -189,7 +190,7 @@ const Util = styled.div`
   gap: 1rem;
   align-items: center;
   flex-wrap: wrap;
-  padding: 2rem 0 4rem 0;
+  padding: 2rem 2rem 4rem;
 
   > div:hover {
     color: var(--primary-color);
@@ -228,7 +229,7 @@ const UtilItem = styled.div`
 
 const ViewerStyle = styled.div`
   padding: 1rem;
-  background-color: #2b2b2b;
+  background-color: #1f1f1f;
 `;
 
 const Copy = styled(UtilItem)`
