@@ -2,16 +2,6 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const url = require('url');
 
-app.whenReady().then(() => {
-  const mainWindow = new BrowserWindow({
-    webPreferences: {
-      nodeIntegration: false,
-      webSecurity: false,
-    },
-  });
-
-  mainWindow.loadFile('index.html');
-});
 
 function createWindow() {
   /*

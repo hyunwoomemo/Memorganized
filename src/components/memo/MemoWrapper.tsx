@@ -58,8 +58,6 @@ const MemoWrapper = () => {
     return () => unsubscribe();
   }, []);
 
-  console.log(memo);
-
   const { setAddModal } = useContext(AddContext);
 
   const { activeDetail, setActiveDetail } = useContext(ActiveDetailContext);
