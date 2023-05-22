@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import GlobalStyle from "./components/common/GlobalStyle";
 import { ResetStyle } from "./components/common/ResetStyle";
 import Layout from "./components/common/Layout";
@@ -13,6 +13,7 @@ import { ActiveDetailContext } from "./context/ActiveDetailContext";
 import { CategoryContext } from "./context/CategoryContext";
 import { FilterCategory } from "./context/FilterCategory";
 import { SearchMemo } from "./context/SearchMemo";
+import { ShowSidebar } from "./context/ShowSidebar";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -21,12 +22,15 @@ function App() {
   const [category, setCategory] = useState([]);
   const [filterCategory, setFilterCategory] = useState("전체");
   const [searchMemo, setSearchMemo] = useState("");
+  const [showSidebar, setShowSidebar] = useState(false);
   console.log(user);
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       setUser(user);
     });
+
+    window.localStorage.setItem("user", JSON.stringify(user));
   }, []);
 
   return (
@@ -37,14 +41,16 @@ function App() {
             <CategoryContext.Provider value={{ category, setCategory }}>
               <FilterCategory.Provider value={{ filterCategory, setFilterCategory }}>
                 <SearchMemo.Provider value={{ searchMemo, setSearchMemo }}>
-                  <Base>
-                    <ResetStyle />
-                    <GlobalStyle />
-                    {user ? <Layout user={user} /> : <Login></Login>}
-                    <Routes>
-                      <Route path="add-memo" element={<AddMemo />} />
-                    </Routes>
-                  </Base>
+                  <ShowSidebar.Provider value={{ showSidebar, setShowSidebar }}>
+                    <Base>
+                      <ResetStyle />
+                      <GlobalStyle />
+                      {user ? <Layout user={user} /> : <Login></Login>}
+                      <Routes>
+                        <Route path="add-memo" element={<AddMemo />} />
+                      </Routes>
+                    </Base>
+                  </ShowSidebar.Provider>
                 </SearchMemo.Provider>
               </FilterCategory.Provider>
             </CategoryContext.Provider>

@@ -1,11 +1,7 @@
 import styled from "@emotion/styled";
 import React, { useContext, useRef, useEffect, useState } from "react";
-import Portal from "../common/Portal";
-import { AddContext } from "../../context/AddContext";
-import { gsap } from "gsap";
 import "@toast-ui/editor/dist/toastui-editor.css";
-import TuiEditor from "./TuiEditor";
-import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../service/firbase";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
@@ -53,7 +49,6 @@ const UpdateMemo = ({ content, setEditMode, id, title, category }: Update) => {
         // Pass the DocumentReference to updateDoc
         title: data.title,
         content: contentHTML,
-        createdAt: new Date(),
         userId: user.uid,
         category: categoryInputRef.current.value,
       });
@@ -115,7 +110,9 @@ const UpdateMemo = ({ content, setEditMode, id, title, category }: Update) => {
   );
 };
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  z-index: 999;
+`;
 
 const Overlay = styled.div`
   width: 100vw;
@@ -129,7 +126,7 @@ const Overlay = styled.div`
 
 const Base = styled.form`
   width: 90vmin;
-  height: 90vmin;
+  height: 90vh;
   position: absolute;
   top: 50%;
   left: 50%;

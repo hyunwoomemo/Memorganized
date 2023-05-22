@@ -9,7 +9,7 @@ interface Props {
 const Previewr = ({ content = "" }: Props) => {
   return (
     <Wrapper>
-      <Base>{content && <Viewer initialValue={content} theme="dark" />}</Base>
+      <Base>{content && <Viewer key={content} initialValue={content} theme="dark" />}</Base>
     </Wrapper>
   );
 };

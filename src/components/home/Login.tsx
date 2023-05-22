@@ -35,6 +35,10 @@ const Title = styled.div`
   align-items: center;
   gap: 1rem;
   margin-bottom: 5rem;
+
+  @media (max-width: 768px) {
+    font-size: 36px;
+  }
 `;
 
 const Button = styled.button`
@@ -49,6 +53,10 @@ const Button = styled.button`
   cursor: pointer;
   border: 1px solid #fff;
   padding: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 export default Login;

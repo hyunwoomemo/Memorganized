@@ -25,6 +25,7 @@ const defaultStyle = css`
   body {
     background-color: var(--main-bgc);
     color: var(--main-color);
+    overscroll-behavior-y: none;
 
     p {
       color: var(--text-color) !important;

@@ -1,9 +1,8 @@
-import React, { ChangeEvent, useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "@emotion/styled";
-import { AiOutlineCheckCircle } from "react-icons/ai";
 import { css } from "@emotion/react";
-import { collection, addDoc, setDoc, doc, getDocs, onSnapshot, deleteDoc, orderBy, query, where } from "firebase/firestore";
-import { auth, db } from "../../service/firbase";
+import { collection, doc, onSnapshot, deleteDoc, orderBy, query, where } from "firebase/firestore";
+import { db } from "../../service/firbase";
 import { UserContext } from "../../context/UserContext";
 import { AddContext } from "../../context/AddContext";
 import AddMemo from "./AddMemo";
@@ -13,7 +12,7 @@ import { toast } from "react-hot-toast";
 import { GoTrashcan } from "react-icons/go";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import Previewr from "./Previewr";
-import { IoIosAddCircle } from "react-icons/io";
+
 import { FilterCategory } from "../../context/FilterCategory";
 import { SearchMemo } from "../../context/SearchMemo";
 
@@ -46,7 +45,6 @@ const MemoWrapper = () => {
   };
 
   const [memo, setMemo] = useState<Memo[]>([]);
-  console.log(memo);
 
   useEffect(() => {
     const q = query(collection(db, "memos"), orderBy("createdAt", "desc"), where("userId", "==", user.uid));
@@ -61,19 +59,13 @@ const MemoWrapper = () => {
     return () => unsubscribe();
   }, []);
 
-  const { setAddModal } = useContext(AddContext);
-
   const { activeDetail, setActiveDetail } = useContext(ActiveDetailContext);
   const [activeId, setActiveId] = useState();
   const [activeTitle, setActiveTitle] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
-  const [animation, setAnimation] = useState(false);
 
   const handleView = (content: any, id: any, title: any, category: any) => {
     setActiveDetail(content);
-    setTimeout(() => {
-      setAnimation(true);
-    }, 100);
     setActiveId(id);
     setActiveTitle(title);
     setActiveCategory(category);
@@ -123,13 +115,10 @@ const MemoWrapper = () => {
 
   const [searchFilterMemo, setSearchFilterMemo] = useState([]);
 
-  console.log(searchMemo);
-
   useEffect(() => {
     const filterMemo = memo.filter((v) => (filterCategory === "전체" ? v : v.category === filterCategory));
     const array: any = filterMemo.filter((v) => (v.title && v.title.indexOf(searchMemo) > -1) || (v.content && v.content.indexOf(searchMemo) > -1));
     setSearchFilterMemo(array);
-    console.log(array);
   }, [searchMemo, filterCategory, memo]);
 
   return (
@@ -137,10 +126,11 @@ const MemoWrapper = () => {
       {searchFilterMemo.map((memoItem: MemoItem) => {
         const { title, content, id, createdAt, category } = memoItem;
 
+        console.log(content);
+
         const { seconds } = createdAt;
 
         const date = new Date(seconds * 1000).toLocaleDateString();
-        console.log(date);
         return (
           <ItemWrapper key={id} onClick={() => handleView(content, id, title, category)} draggable={true} onDragStart={() => handleDragStart(id)} onDragEnd={() => handleDragEnd()}>
             {title && <ItemTitle>{title}</ItemTitle>}
@@ -152,10 +142,8 @@ const MemoWrapper = () => {
           </ItemWrapper>
         );
       })}
-      {activeDetail && <TuiViewer category={activeCategory} title={activeTitle} id={activeId} show={animation} className="viewer" content={activeDetail} selector="#portal" setAni={setAnimation} />}
-      <AddBtn onClick={() => setAddModal(true)}>
-        <IoIosAddCircle />
-      </AddBtn>
+      {activeDetail && <TuiViewer category={activeCategory} title={activeTitle} id={activeId} className="viewer" content={activeDetail} selector="#portal" />}
+
       <AddMemo />
       <TrashBinWrapper showTrashBin={showTrashBin}>
         {showTrashBin && (
@@ -192,19 +180,6 @@ const ItemWrapper = styled.div`
   position: relative;
   user-select: none;
   cursor: pointer;
-  &:hover:before {
-    width: 100%;
-  }
-  &:before {
-    content: "";
-    position: absolute;
-    top: 1px;
-    left: 0;
-    width: 5%;
-    height: 3px;
-    background-color: var(--primary-color);
-    transition: all 0.3s;
-  }
 `;
 
 const ItemTitle = styled.div`
@@ -232,20 +207,6 @@ const CategoryItem = styled.div`
 const Create = styled.div`
   font-size: 14px;
   color: gray;
-`;
-
-const AddBtn = styled.div`
-  position: absolute;
-  bottom: 30px;
-  right: 30px;
-  cursor: pointer;
-  font-size: 60px;
-  color: #3e3e3e;
-  backdrop-filter: blur(3px);
-
-  &:hover {
-    color: var(--primary-color);
-  }
 `;
 
 const TrashBinWrapper = styled.div<{ showTrashBin: boolean }>`

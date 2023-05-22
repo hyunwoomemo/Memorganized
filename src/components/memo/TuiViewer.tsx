@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Viewer } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
@@ -6,7 +6,6 @@ import styled from "@emotion/styled";
 import Portal from "../common/Portal";
 import { ActiveDetailContext } from "../../context/ActiveDetailContext";
 import { css } from "@emotion/react";
-import UpdateTuiEditor from "./UpdateTuiEditor";
 import UpdateMemo from "./UpdateMemo";
 import { FiEdit } from "react-icons/fi";
 import { AiOutlineCloseCircle } from "react-icons/ai";
@@ -15,15 +14,13 @@ interface Props {
   content: string;
   selector: string;
   className: string;
-  show: any;
-  setAni: any;
   id: any;
   title: any;
   category: string;
 }
 
-const TuiViewer = ({ content, selector = "#portal", show, setAni, id, title, category }: Props) => {
-  const { activeDetail, setActiveDetail } = useContext(ActiveDetailContext);
+const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props) => {
+  const { setActiveDetail } = useContext(ActiveDetailContext);
 
   const [editMode, setEditMode] = useState(false);
   const handleUpdate = () => {
@@ -40,7 +37,7 @@ const TuiViewer = ({ content, selector = "#portal", show, setAni, id, title, cat
 
   return (
     <Portal selector={selector}>
-      <Wrapper show={show}>
+      <Wrapper>
         <Overlay></Overlay>
         <Base editMode={editMode} ref={baseRef}>
           <Util>
@@ -52,7 +49,6 @@ const TuiViewer = ({ content, selector = "#portal", show, setAni, id, title, cat
             <Close
               onClick={() => {
                 setActiveDetail("");
-                setAni(false);
               }}
             >
               <AiOutlineCloseCircle />
@@ -68,14 +64,6 @@ const TuiViewer = ({ content, selector = "#portal", show, setAni, id, title, cat
 
 const Wrapper = styled.div<any>`
   transition: all 0.3s;
-  ${({ show }) =>
-    show
-      ? css`
-          opacity: 1;
-        `
-      : css`
-          opacity: 0;
-        `}
 `;
 
 const Overlay = styled.div`
@@ -95,12 +83,11 @@ const Base = styled.div<{ editMode: boolean }>`
   padding: 1rem;
   transform: translate(-50%, -50%);
   z-index: 9999;
-  width: 90vmin;
-  height: 90vmin;
+  width: 100vw;
+  height: 100vh;
   background-color: var(--sub-bgc);
   color: var(--main-text);
 
-  border-radius: 10px;
   transition: all 0.3s;
 
   ${({ editMode }) =>
@@ -137,6 +124,8 @@ const Util = styled.div`
   > div:hover {
     color: var(--primary-color);
   }
+
+  border-bottom: 1px solid var(--primary-color);
 `;
 
 const UtilItem = styled.div`

@@ -3,13 +3,13 @@ import styled from "@emotion/styled";
 import { SearchMemo } from "../../context/SearchMemo";
 
 const Search = () => {
-  const { setSearchMemo } = useContext(SearchMemo);
+  const { searchMemo, setSearchMemo } = useContext(SearchMemo);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchMemo(e.target.value);
   };
   return (
     <Base>
-      <input type="text" placeholder="검색어를 입력하세요" onChange={(e) => handleChange(e)} />
+      <input id="search" type="text" placeholder="검색어를 입력하세요" value={searchMemo} onChange={(e) => handleChange(e)} />
     </Base>
   );
 };

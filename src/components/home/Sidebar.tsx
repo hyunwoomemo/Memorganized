@@ -9,12 +9,8 @@ import { CategoryContext } from "../../context/CategoryContext";
 import { FilterCategory } from "../../context/FilterCategory";
 import { css } from "@emotion/react";
 import { SearchMemo } from "../../context/SearchMemo";
+import { ShowSidebar } from "../../context/ShowSidebar";
 const { throttle } = require("lodash");
-
-type Category = {
-  name: string;
-  id: string;
-};
 
 const Sidebar = ({ user }: any) => {
   const [showLogout, setShowLogout] = React.useState<boolean>(false);
@@ -40,7 +36,7 @@ const Sidebar = ({ user }: any) => {
   const categoryNameArray = category.map((v: any) => v.name);
   const uniqueCategory = category.map((v: any) => v.name).filter((v1: never, i: number, arr: []) => arr.indexOf(v1) === i);
   const { filterCategory, setFilterCategory } = useContext(FilterCategory);
-  const { setSearchMemo } = useContext(SearchMemo);
+  const { searchMemo, setSearchMemo } = useContext(SearchMemo);
   const [active, setActive] = useState("전체");
 
   useEffect(() => {
@@ -62,8 +58,12 @@ const Sidebar = ({ user }: any) => {
     };
   }, []);
 
+  // 모바일 화면에서 sidebar 노출 옵션
+
+  const { showSidebar } = useContext(ShowSidebar);
+
   return (
-    <Base screenWidth={screenWidth}>
+    <Base screenWidth={screenWidth} showSidebar={showSidebar}>
       <Container>
         <Title>
           <FaCube />
@@ -71,12 +71,18 @@ const Sidebar = ({ user }: any) => {
         </Title>
         <Search />
         <CategoryWrapper>
-          <CategoryItem active={active === "전체"} onClick={() => setFilterCategory("전체")}>{`전체 (${categoryNameArray.length})`}</CategoryItem>
+          <CategoryItem
+            active={active === "전체" && !searchMemo}
+            onClick={() => {
+              setFilterCategory("전체");
+              setSearchMemo("");
+            }}
+          >{`전체 (${categoryNameArray.length})`}</CategoryItem>
           {uniqueCategory.map((item: string) => {
             return (
               <CategoryItem
-                active={active === item}
-                onClick={() => {
+                active={active === item && !searchMemo}
+                onClick={(e) => {
                   setFilterCategory(item);
                   setSearchMemo("");
                 }}
@@ -87,6 +93,7 @@ const Sidebar = ({ user }: any) => {
         </CategoryWrapper>
       </Container>
       <Footer>
+        🔥 welcome,
         <Profile src={user.photoURL} alt="" onClick={handleLogout} />
         <Button onClick={signOut}>로그아웃</Button>
       </Footer>
@@ -94,7 +101,7 @@ const Sidebar = ({ user }: any) => {
   );
 };
 
-const Base = styled.div<{ screenWidth: number }>`
+const Base = styled.div<{ screenWidth: number; showSidebar: boolean }>`
   order: -1;
   height: 100%;
 
@@ -108,8 +115,15 @@ const Base = styled.div<{ screenWidth: number }>`
           position: absolute;
           transform: translateX(-100%);
         `}
+
+  ${({ showSidebar }) =>
+    showSidebar
+      ? css`
+          transform: translateX(0);
+        `
+      : css``}
   top: 0;
-  z-index: 9998;
+  z-index: 4;
   background-color: var(--main-bgc);
   transition: all 0.3s;
 
@@ -159,15 +173,16 @@ const Footer = styled.div`
   position: absolute;
   padding: 1rem;
   bottom: 0;
-  background-color: var(--sub-bgc);
   width: 100%;
   display: flex;
-  justify-content: center;
+  border-top: 1px solid #ffffff2b;
+  align-items: center;
+  gap: 10px;
 `;
 
 const Profile = styled.img`
   border-radius: 50%;
-  width: 40px;
+  width: 30px;
   align-self: center;
 `;
 

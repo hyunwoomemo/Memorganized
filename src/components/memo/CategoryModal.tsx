@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { CategoryContext } from "../../context/CategoryContext";
 import { css } from "@emotion/react";
 

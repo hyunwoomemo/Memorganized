@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import React, { useContext, useRef, useEffect, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import Portal from "../common/Portal";
 import { AddContext } from "../../context/AddContext";
-import { gsap } from "gsap";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import TuiEditor from "./TuiEditor";
 import { addDoc, collection } from "firebase/firestore";
@@ -10,23 +9,12 @@ import { db } from "../../service/firbase";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { UserContext } from "../../context/UserContext";
-import { ActiveDetailContext } from "../../context/ActiveDetailContext";
 import CategoryModal from "./CategoryModal";
+import { css } from "@emotion/react";
 
 const AddMemo = ({ selector = "#portal" }) => {
   const { addModal, setAddModal } = useContext(AddContext);
   const { user } = useContext(UserContext);
-
-  useEffect(() => {
-    if (addModal) {
-      gsap.fromTo(".wrapper", { opacity: 0 }, { opacity: 1, duration: 0.5, pointerEvents: "all" });
-    } else {
-      // 애니메이션 종료
-      gsap.fromTo(".wrapper", { opacity: 1 }, { opacity: 0, duration: 0.5, pointerEvents: "none" });
-    }
-
-    return () => {};
-  }, [addModal]);
 
   const ref = useRef<any>(null);
 
@@ -41,12 +29,7 @@ const AddMemo = ({ selector = "#portal" }) => {
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>();
+  const { register, handleSubmit, reset } = useForm<FormValues>();
 
   const handleClose = () => {
     setAddModal(false);
@@ -123,7 +106,7 @@ const AddMemo = ({ selector = "#portal" }) => {
       <div>
         <Toaster />
       </div>
-      <Wrapper className="wrapper">
+      <Wrapper show={addModal}>
         <Overlay></Overlay>
         <Base onSubmit={handleSave}>
           <TitleWrapper>
@@ -146,9 +129,15 @@ const AddMemo = ({ selector = "#portal" }) => {
   );
 };
 
-const Wrapper = styled.div`
-  opacity: 0;
-  pointer-events: none;
+const Wrapper = styled.div<{ show: boolean }>`
+  ${({ show }) =>
+    show
+      ? css`
+          display: block;
+        `
+      : css`
+          display: none;
+        `}
 `;
 
 const Overlay = styled.div`
@@ -163,7 +152,7 @@ const Overlay = styled.div`
 
 const Base = styled.form`
   width: 90vmin;
-  height: 90vmin;
+  height: 90vh;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -171,6 +160,8 @@ const Base = styled.form`
   background-color: var(--sub-bgc);
   display: flex;
   flex-direction: column;
+  border-radius: 5px;
+  z-index: 9;
 `;
 
 const TitleWrapper = styled.div`
@@ -228,6 +219,7 @@ const SubMit = styled.button`
   color: var(--main-text);
   cursor: pointer;
   position: relative;
+  border-radius: 0 0 5px 0;
 `;
 
 export default AddMemo;
