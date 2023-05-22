@@ -122,8 +122,8 @@ const Overlay = styled.div`
 `;
 
 const Base = styled.form`
-  width: 90vmin;
-  height: 90vh;
+  width: 100vw;
+  height: 100vh;
   position: absolute;
   top: 50%;
   left: 50%;

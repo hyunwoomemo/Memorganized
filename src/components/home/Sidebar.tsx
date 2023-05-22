@@ -99,7 +99,7 @@ const Sidebar = ({ user }: any) => {
         </CategoryWrapper>
       </Container>
       <Footer onClick={handleLogout}>
-        🔥 welcome,
+        <span hidden={showLogout}>🔥 welcome,</span>
         <Profile src={user.photoURL} alt="" />
         {showLogout && <Button onClick={signOut}>로그아웃</Button>}
       </Footer>

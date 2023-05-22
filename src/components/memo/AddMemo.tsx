@@ -103,9 +103,6 @@ const AddMemo = ({ selector = "#portal" }) => {
 
   return (
     <Portal selector={selector}>
-      <Toast>
-        <Toaster />
-      </Toast>
       <Wrapper show={addModal}>
         <Overlay></Overlay>
         <Base onSubmit={handleSave}>
@@ -151,8 +148,8 @@ const Overlay = styled.div`
 `;
 
 const Base = styled.form`
-  width: 90vmin;
-  height: 90vh;
+  width: 100vw;
+  height: 100vh;
   position: absolute;
   top: 50%;
   left: 50%;

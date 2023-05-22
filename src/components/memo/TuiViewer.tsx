@@ -61,9 +61,9 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
       <Wrapper>
         <Overlay></Overlay>
         <Base editMode={editMode} ref={baseRef}>
+          {category && <Category>{category}</Category>}
           <Util>
             {title && <Title>{title}</Title>}
-            {category && <Category>{category}</Category>}
             <Update onClick={() => handleUpdate()}>
               <FiEdit />
             </Update>
@@ -130,8 +130,8 @@ const Title = styled.div`
   flex: 1 1 auto;
 `;
 
-const Category = styled.div`
-  font-size: 16px;
+const Category = styled.span`
+  font-size: 12px;
   padding: 4px 8px;
   border-radius: 5px;
   background-color: var(--main-bgc);
@@ -144,6 +144,7 @@ const Util = styled.div`
   font-size: 20px;
   gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
 
   > div:hover {
     color: var(--primary-color);
