@@ -103,7 +103,7 @@ const Memo = () => {
         </MainHeader>
         <Header>
           <Btn>
-            <InstallBtn onClick={() => handleInstall()}>앱 설치하기</InstallBtn>
+            {deferredPrompt && <InstallBtn onClick={() => handleInstall()}>앱 설치하기</InstallBtn>}
             <AddBtn onClick={() => setAddModal(true)}>메모 추가하기</AddBtn>
           </Btn>
         </Header>

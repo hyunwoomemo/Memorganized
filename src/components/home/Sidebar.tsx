@@ -10,6 +10,7 @@ import { FilterCategory } from "../../context/FilterCategory";
 import { css } from "@emotion/react";
 import { SearchMemo } from "../../context/SearchMemo";
 import { ShowSidebar } from "../../context/ShowSidebar";
+import { CgArrowUpO } from "react-icons/cg";
 const { throttle } = require("lodash");
 
 const Sidebar = ({ user }: any) => {
@@ -75,7 +76,10 @@ const Sidebar = ({ user }: any) => {
         </Title>
         <Search loc="sidebar" />
         <Category onClick={handleCategory}>
-          📚 Category <Arrow hideCategory={hideCategory}>🔼</Arrow>
+          📚 Category{" "}
+          <Arrow hideCategory={hideCategory}>
+            <CgArrowUpO />
+          </Arrow>
         </Category>
         <CategoryWrapper hideCategory={hideCategory}>
           <CategoryItem
@@ -165,6 +169,7 @@ const Category = styled.div`
 const Arrow = styled.span<{ hideCategory: boolean }>`
   margin-left: auto;
   transition: transform 0.3s;
+  font-size: 20px;
   ${({ hideCategory }) =>
     hideCategory
       ? css`
