@@ -15,6 +15,7 @@ import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import Previewr from "./Previewr";
 import { IoIosAddCircle } from "react-icons/io";
 import { FilterCategory } from "../../context/FilterCategory";
+import { SearchMemo } from "../../context/SearchMemo";
 
 type MemoItem = {
   title?: string | null;
@@ -40,6 +41,8 @@ const MemoWrapper = () => {
   type Memo = {
     category?: string;
     id: string;
+    title?: string;
+    content?: string;
   };
 
   const [memo, setMemo] = useState<Memo[]>([]);
@@ -115,14 +118,23 @@ const MemoWrapper = () => {
 
   const { filterCategory } = useContext(FilterCategory);
 
-  console.log(filterCategory);
+  // search keyword
+  const { searchMemo } = useContext(SearchMemo);
 
-  const filterMemo = memo.filter((v) => (filterCategory === "전체" ? v : v.category === filterCategory));
-  console.log(filterMemo);
+  const [searchFilterMemo, setSearchFilterMemo] = useState([]);
+
+  console.log(searchMemo);
+
+  useEffect(() => {
+    const filterMemo = memo.filter((v) => (filterCategory === "전체" ? v : v.category === filterCategory));
+    const array: any = filterMemo.filter((v) => (v.title && v.title.indexOf(searchMemo) > -1) || (v.content && v.content.indexOf(searchMemo) > -1));
+    setSearchFilterMemo(array);
+    console.log(array);
+  }, [searchMemo, filterCategory, memo]);
 
   return (
     <Base>
-      {filterMemo.map((memoItem: MemoItem) => {
+      {searchFilterMemo.map((memoItem: MemoItem) => {
         const { title, content, id, createdAt, category } = memoItem;
 
         const { seconds } = createdAt;
@@ -229,6 +241,7 @@ const AddBtn = styled.div`
   cursor: pointer;
   font-size: 60px;
   color: #3e3e3e;
+  backdrop-filter: blur(3px);
 
   &:hover {
     color: var(--primary-color);

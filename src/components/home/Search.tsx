@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "@emotion/styled";
+import { SearchMemo } from "../../context/SearchMemo";
 
 const Search = () => {
+  const { setSearchMemo } = useContext(SearchMemo);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchMemo(e.target.value);
+  };
   return (
     <Base>
-      <input type="text" placeholder="검색어를 입력하세요" />
+      <input type="text" placeholder="검색어를 입력하세요" onChange={(e) => handleChange(e)} />
     </Base>
   );
 };

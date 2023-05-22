@@ -12,6 +12,7 @@ import AddMemo from "./components/memo/AddMemo";
 import { ActiveDetailContext } from "./context/ActiveDetailContext";
 import { CategoryContext } from "./context/CategoryContext";
 import { FilterCategory } from "./context/FilterCategory";
+import { SearchMemo } from "./context/SearchMemo";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -19,6 +20,7 @@ function App() {
   const [activeDetail, setActiveDetail] = useState("");
   const [category, setCategory] = useState([]);
   const [filterCategory, setFilterCategory] = useState("전체");
+  const [searchMemo, setSearchMemo] = useState("");
   console.log(user);
 
   useEffect(() => {
@@ -34,14 +36,16 @@ function App() {
           <ActiveDetailContext.Provider value={{ activeDetail, setActiveDetail }}>
             <CategoryContext.Provider value={{ category, setCategory }}>
               <FilterCategory.Provider value={{ filterCategory, setFilterCategory }}>
-                <Base>
-                  <ResetStyle />
-                  <GlobalStyle />
-                  {user ? <Layout user={user} /> : <Login></Login>}
-                  <Routes>
-                    <Route path="add-memo" element={<AddMemo />} />
-                  </Routes>
-                </Base>
+                <SearchMemo.Provider value={{ searchMemo, setSearchMemo }}>
+                  <Base>
+                    <ResetStyle />
+                    <GlobalStyle />
+                    {user ? <Layout user={user} /> : <Login></Login>}
+                    <Routes>
+                      <Route path="add-memo" element={<AddMemo />} />
+                    </Routes>
+                  </Base>
+                </SearchMemo.Provider>
               </FilterCategory.Provider>
             </CategoryContext.Provider>
           </ActiveDetailContext.Provider>

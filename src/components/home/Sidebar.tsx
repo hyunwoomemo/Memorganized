@@ -8,6 +8,8 @@ import { db } from "../../service/firbase";
 import { CategoryContext } from "../../context/CategoryContext";
 import { FilterCategory } from "../../context/FilterCategory";
 import { css } from "@emotion/react";
+import { SearchMemo } from "../../context/SearchMemo";
+const { throttle } = require("lodash");
 
 type Category = {
   name: string;
@@ -38,14 +40,30 @@ const Sidebar = ({ user }: any) => {
   const categoryNameArray = category.map((v: any) => v.name);
   const uniqueCategory = category.map((v: any) => v.name).filter((v1: never, i: number, arr: []) => arr.indexOf(v1) === i);
   const { filterCategory, setFilterCategory } = useContext(FilterCategory);
+  const { setSearchMemo } = useContext(SearchMemo);
   const [active, setActive] = useState("전체");
 
   useEffect(() => {
     setActive(filterCategory);
   }, [filterCategory]);
 
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  const handleResize = throttle(() => {
+    setScreenWidth(window.innerWidth);
+  }, 200);
+  console.log(screenWidth);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <Base>
+    <Base screenWidth={screenWidth}>
       <Container>
         <Title>
           <FaCube />
@@ -56,9 +74,14 @@ const Sidebar = ({ user }: any) => {
           <CategoryItem active={active === "전체"} onClick={() => setFilterCategory("전체")}>{`전체 (${categoryNameArray.length})`}</CategoryItem>
           {uniqueCategory.map((item: string) => {
             return (
-              <CategoryItem active={active === item} onClick={() => setFilterCategory(item)} key={item}>{`${item === "" ? "미분류" : item} (${
-                categoryNameArray.filter((v: any) => v === item).length
-              })`}</CategoryItem>
+              <CategoryItem
+                active={active === item}
+                onClick={() => {
+                  setFilterCategory(item);
+                  setSearchMemo("");
+                }}
+                key={item}
+              >{`${item === "" ? "미분류" : item} (${categoryNameArray.filter((v: any) => v === item).length})`}</CategoryItem>
             );
           })}
         </CategoryWrapper>
@@ -71,11 +94,24 @@ const Sidebar = ({ user }: any) => {
   );
 };
 
-const Base = styled.div`
+const Base = styled.div<{ screenWidth: number }>`
   order: -1;
   height: 100%;
-  position: sticky;
+
+  ${({ screenWidth }) =>
+    screenWidth > 768
+      ? css`
+          position: sticky;
+          transform: translateX(0);
+        `
+      : css`
+          position: absolute;
+          transform: translateX(-100%);
+        `}
   top: 0;
+  z-index: 9998;
+  background-color: var(--main-bgc);
+  transition: all 0.3s;
 
   border-right: 1px solid #ffffff2b;
 `;
@@ -99,6 +135,7 @@ const CategoryWrapper = styled.div`
   flex-direction: column;
   gap: 1rem;
   overflow-y: scroll;
+  max-height: 300px;
 `;
 
 const CategoryItem = styled.div<{ active: boolean }>`
