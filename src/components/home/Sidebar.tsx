@@ -48,7 +48,6 @@ const Sidebar = ({ user }: any) => {
   const handleResize = throttle(() => {
     setScreenWidth(window.innerWidth);
   }, 200);
-  console.log(screenWidth);
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
@@ -69,7 +68,7 @@ const Sidebar = ({ user }: any) => {
           <FaCube />
           Memorganized
         </Title>
-        <Search />
+        <Search loc="sidebar" />
         <CategoryWrapper>
           <CategoryItem
             active={active === "전체" && !searchMemo}
@@ -92,10 +91,10 @@ const Sidebar = ({ user }: any) => {
           })}
         </CategoryWrapper>
       </Container>
-      <Footer>
+      <Footer onClick={handleLogout}>
         🔥 welcome,
-        <Profile src={user.photoURL} alt="" onClick={handleLogout} />
-        <Button onClick={signOut}>로그아웃</Button>
+        <Profile src={user.photoURL} alt="" />
+        {showLogout && <Button onClick={signOut}>로그아웃</Button>}
       </Footer>
     </Base>
   );
@@ -123,7 +122,7 @@ const Base = styled.div<{ screenWidth: number; showSidebar: boolean }>`
         `
       : css``}
   top: 0;
-  z-index: 4;
+  z-index: 5;
   background-color: var(--main-bgc);
   transition: all 0.3s;
 
@@ -135,6 +134,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  height: 100%;
+  padding-bottom: 65px;
 `;
 
 const Title = styled.h1`
@@ -149,7 +150,6 @@ const CategoryWrapper = styled.div`
   flex-direction: column;
   gap: 1rem;
   overflow-y: scroll;
-  max-height: 300px;
 `;
 
 const CategoryItem = styled.div<{ active: boolean }>`
@@ -177,7 +177,9 @@ const Footer = styled.div`
   display: flex;
   border-top: 1px solid #ffffff2b;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  cursor: pointer;
 `;
 
 const Profile = styled.img`
@@ -187,18 +189,11 @@ const Profile = styled.img`
 `;
 
 const Button = styled.button`
-  color: var(--main-text);
-  background: none;
   border: 0;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  color: #d0d0d0;
-  cursor: pointer;
-
-  &:hover {
-    color: var(--primary-color);
-  }
+  background-color: var(--sub-bgc);
+  color: var(--main-text);
+  padding: 3px 5px;
+  border-radius: 5px;
 `;
 
 export default Sidebar;

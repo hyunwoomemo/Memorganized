@@ -126,8 +126,6 @@ const MemoWrapper = () => {
       {searchFilterMemo.map((memoItem: MemoItem) => {
         const { title, content, id, createdAt, category } = memoItem;
 
-        console.log(content);
-
         const { seconds } = createdAt;
 
         const date = new Date(seconds * 1000).toLocaleDateString();
@@ -163,8 +161,8 @@ const MemoWrapper = () => {
 
 const Base = styled.div`
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   padding: 2rem 0;
 `;
@@ -178,7 +176,8 @@ const ItemWrapper = styled.div`
   flex-direction: column;
   gap: 10px;
   position: relative;
-  user-select: none;
+  flex: 1 1 auto;
+
   cursor: pointer;
 `;
 

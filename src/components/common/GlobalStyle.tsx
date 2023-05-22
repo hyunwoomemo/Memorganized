@@ -15,6 +15,8 @@ const defaultStyle = css`
     box-sizing: border-box;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 
     &::-webkit-scrollbar {
       display: none; /* Chrome, Safari, Opera*/
