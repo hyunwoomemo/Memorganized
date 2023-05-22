@@ -8,11 +8,12 @@ import { ActiveDetailContext } from "../../context/ActiveDetailContext";
 import { css } from "@emotion/react";
 import UpdateMemo from "./UpdateMemo";
 import { FiEdit } from "react-icons/fi";
-import { AiOutlineCloseCircle } from "react-icons/ai";
+import { AiOutlineCloseCircle, AiOutlineCopy } from "react-icons/ai";
 import { GoTrashcan } from "react-icons/go";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../service/firbase";
 import { toast } from "react-hot-toast";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 interface Props {
   content: string;
@@ -56,6 +57,22 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
     }
   };
 
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    toast("복사되었습니다.", {
+      icon: "📋",
+    });
+    setCopied(true);
+  };
+
+  const parser = new DOMParser();
+  const parsedHTML = parser.parseFromString(content, "text/html");
+
+  const plainText = parsedHTML.body.innerHTML.replace(/<br>/g, "\n").replace(/<\/?[^>]+(>|$)/g, "");
+
+  console.log(plainText);
+
   return (
     <Portal selector={selector}>
       <Wrapper>
@@ -64,6 +81,11 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
           {category && <Category>{category}</Category>}
           <Util>
             {title && <Title>{title}</Title>}
+            <CopyToClipboard text={plainText} onCopy={handleCopy}>
+              <Copy>
+                <AiOutlineCopy />
+              </Copy>
+            </CopyToClipboard>
             <Update onClick={() => handleUpdate()}>
               <FiEdit />
             </Update>
@@ -88,6 +110,7 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
 
 const Wrapper = styled.div<any>`
   transition: all 0.3s;
+  user-select: text;
 `;
 
 const Overlay = styled.div`
@@ -106,7 +129,7 @@ const Base = styled.div<{ editMode: boolean }>`
   left: 50%;
   padding: 1rem;
   transform: translate(-50%, -50%);
-  z-index: 9999;
+  z-index: 998;
   width: 100vw;
   height: 100vh;
   background-color: var(--sub-bgc);
@@ -178,6 +201,12 @@ const UtilItem = styled.div`
   &:hover:before {
     color: #000;
     opacity: 1;
+  }
+`;
+
+const Copy = styled(UtilItem)`
+  &:before {
+    content: "복사";
   }
 `;
 

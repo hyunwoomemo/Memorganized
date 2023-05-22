@@ -11,9 +11,11 @@ import toast, { Toaster } from "react-hot-toast";
 import { UserContext } from "../../context/UserContext";
 import CategoryModal from "./CategoryModal";
 import { css } from "@emotion/react";
+import { FilterCategory } from "../../context/FilterCategory";
 
 const AddMemo = ({ selector = "#portal" }) => {
   const { addModal, setAddModal } = useContext(AddContext);
+  const { setFilterCategory } = useContext(FilterCategory);
   const { user } = useContext(UserContext);
 
   const ref = useRef<any>(null);
@@ -75,6 +77,7 @@ const AddMemo = ({ selector = "#portal" }) => {
       categoryInputRef.current.value = "";
       setCategorySearch("");
       setShowCategoryModal(false);
+      setFilterCategory("전체");
     } catch (e) {
       toast.error(`${e}` || "다시 시도해주세요.");
     }

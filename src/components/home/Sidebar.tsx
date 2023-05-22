@@ -59,7 +59,7 @@ const Sidebar = ({ user }: any) => {
 
   // 모바일 화면에서 sidebar 노출 옵션
 
-  const { showSidebar } = useContext(ShowSidebar);
+  const { showSidebar, setShowSidebar } = useContext(ShowSidebar);
 
   const [hideCategory, setHideCategory] = useState(true);
   const handleCategory = () => {
@@ -74,13 +74,16 @@ const Sidebar = ({ user }: any) => {
           Memorganized
         </Title>
         <Search loc="sidebar" />
-        <Category onClick={handleCategory}>📚 Category</Category>
+        <Category onClick={handleCategory}>
+          📚 Category <Arrow hideCategory={hideCategory}>🔼</Arrow>
+        </Category>
         <CategoryWrapper hideCategory={hideCategory}>
           <CategoryItem
             active={active === "전체" && !searchMemo}
             onClick={() => {
               setFilterCategory("전체");
               setSearchMemo("");
+              setShowSidebar(false);
             }}
           >{`전체 (${categoryNameArray.length})`}</CategoryItem>
           {uniqueCategory.map((item: string) => {
@@ -91,6 +94,7 @@ const Sidebar = ({ user }: any) => {
                 onClick={(e) => {
                   setFilterCategory(item);
                   setSearchMemo("");
+                  setShowSidebar(false);
                 }}
                 key={item}
               >{`${item === "" ? "미분류" : item} (${categoryNameArray.filter((v: any) => v === item).length})`}</CategoryItem>
@@ -149,10 +153,26 @@ const Title = styled.h1`
   display: flex;
   gap: 10px;
   align-items: center;
+  padding: 1rem 0;
 `;
 
 const Category = styled.div`
   cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
+
+const Arrow = styled.span<{ hideCategory: boolean }>`
+  margin-left: auto;
+  transition: transform 0.3s;
+  ${({ hideCategory }) =>
+    hideCategory
+      ? css`
+          transform: rotate(180deg);
+        `
+      : css`
+          transform: rotate(0);
+        `}
 `;
 
 const CategoryWrapper = styled.div<{ hideCategory: boolean }>`

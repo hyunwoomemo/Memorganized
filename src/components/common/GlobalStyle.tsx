@@ -15,7 +15,7 @@ const defaultStyle = css`
     box-sizing: border-box;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
-    user-select: none;
+
     -webkit-tap-highlight-color: transparent;
 
     &::-webkit-scrollbar {
@@ -28,6 +28,7 @@ const defaultStyle = css`
     background-color: var(--main-bgc);
     color: var(--main-color);
     overscroll-behavior-y: none;
+    user-select: none;
 
     p {
       color: var(--text-color) !important;

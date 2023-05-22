@@ -7,6 +7,7 @@ import { css } from "@emotion/react";
 import { AddContext } from "../../context/AddContext";
 import Search from "./Search";
 import { toast } from "react-hot-toast";
+import logo from "./logo192.png";
 
 interface BeforeInstallPromptEvent extends Event {
   /**
@@ -54,6 +55,24 @@ const Memo = () => {
 
     setDeferredPrompt(event);
   };
+
+  useEffect(() => {
+    if (deferredPrompt) {
+      toast(
+        (t) => (
+          <InstallToast>
+            <img src={logo}></img>
+            <span>앱을 설치해주세요</span>
+            <button onClick={() => handleInstall()}>설치</button>
+            <button onClick={() => toast.dismiss(t.id)}>취소</button>
+          </InstallToast>
+        ),
+        {
+          duration: 30000,
+        }
+      );
+    }
+  }, [deferredPrompt]);
 
   const handleInstall = () => {
     if (deferredPrompt) {
@@ -192,6 +211,25 @@ const Btn = styled.div`
       padding: 8px 14px;
       border-radius: 25px;
     }
+  }
+`;
+
+const InstallToast = styled.div`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+  > img {
+    width: 30px;
+    background-color: var(--sub-bgc);
+    border-radius: 50%;
+  }
+
+  > button {
+    border: 0;
+    background-color: #f5dfe3;
+    padding: 5px 10px;
+    border-radius: 5px;
   }
 `;
 
