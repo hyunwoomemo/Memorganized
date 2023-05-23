@@ -14,6 +14,7 @@ import { CgArrowUpO } from "react-icons/cg";
 import { BiCategoryAlt } from "react-icons/bi";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { IsDark } from "../../context/IsDark";
+import { toast } from "react-hot-toast";
 const { throttle } = require("lodash");
 
 const Sidebar = ({ user }: any) => {
@@ -109,6 +110,34 @@ const Sidebar = ({ user }: any) => {
     }
   }, [isDark]);
 
+  // 로그아웃 토스트
+
+  const handleLogoutToast = () => {
+    toast(
+      (t) => (
+        <LogoutToast>
+          <span>정말 로그아웃 하시겠습니까?</span>
+          <button
+            onClick={() => {
+              signOut();
+              toast.dismiss(t.id);
+            }}
+          >
+            확인
+          </button>
+          <button onClick={() => toast.dismiss(t.id)}>취소</button>
+        </LogoutToast>
+      ),
+      {
+        icon: "💤",
+        /*         style: {
+          background: "var(--danger-color)",
+          color: "#fff",
+        }, */
+      }
+    );
+  };
+
   return (
     <Base screenWidth={screenWidth} showSidebar={showSidebar}>
       <Container>
@@ -158,7 +187,7 @@ const Sidebar = ({ user }: any) => {
         <div onClick={handleLogout}>
           <span hidden={showLogout}>🔥 welcome,</span>
           <Profile src={user.photoURL} alt="" />
-          {showLogout && <Button onClick={signOut}>로그아웃</Button>}
+          {showLogout && <Button onClick={() => handleLogoutToast()}>로그아웃</Button>}
         </div>
       </Footer>
     </Base>
@@ -273,7 +302,7 @@ const CategoryItem = styled.div<{ active: boolean }>`
 const Setting = styled.div<{ isDark: boolean }>`
   display: flex;
   padding: 10px 10px;
-  background-color: var(--border2-color);
+  background-color: var(--theme-bgc);
   gap: 5rem;
   border-radius: 25px;
   font-size: 20px;
@@ -341,6 +370,23 @@ const Button = styled.button`
   cursor: pointer;
   &:hover {
     color: var(--danger-color);
+  }
+`;
+
+const LogoutToast = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  > button {
+    border: 0;
+    background: #ececec;
+    color: #000;
+    padding: 3px 6px;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+      background: #d4d4d4;
+    }
   }
 `;
 

@@ -50,14 +50,36 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
       setActiveDetail("");
       toast("삭제되었습니다!", {
         icon: "🗑️",
-        style: {
-          background: "var(--danger-color)",
-          color: "var(--main-text)",
-        },
       });
     } catch (error) {
       console.error("Error deleting document: ", error);
     }
+  };
+
+  const handleClick = (id: string) => {
+    toast(
+      (t) => (
+        <DeleteToast>
+          <span>정말 삭제하시겠습니까?</span>
+          <button
+            onClick={() => {
+              handleDelete(id);
+              toast.dismiss(t.id);
+            }}
+          >
+            확인
+          </button>
+          <button onClick={() => toast.dismiss(t.id)}>취소</button>
+        </DeleteToast>
+      ),
+      {
+        icon: "🗑️",
+        style: {
+          background: "var(--danger-color)",
+          color: "#fff",
+        },
+      }
+    );
   };
 
   const [copied, setCopied] = useState(false);
@@ -97,7 +119,7 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
             <Update onClick={() => handleUpdate()}>
               <FiEdit />
             </Update>
-            <Delete onClick={() => handleDelete(id)}>
+            <Delete onClick={() => handleClick(id)}>
               <GoTrashcan />
             </Delete>
             <Close
@@ -235,6 +257,23 @@ const Update = styled(UtilItem)`
 const Delete = styled(UtilItem)`
   &:before {
     content: "삭제";
+  }
+`;
+
+const DeleteToast = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  > button {
+    border: 0;
+    background: #fff;
+    color: #000;
+    padding: 3px 6px;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+      background: #ececec;
+    }
   }
 `;
 

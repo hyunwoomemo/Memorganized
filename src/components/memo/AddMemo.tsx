@@ -204,6 +204,8 @@ const SubMit = styled.button`
   cursor: pointer;
   position: relative;
   border-radius: 0 0 5px 0;
+  font-size: 16px;
+  font-weight: bold;
 `;
 
 export default AddMemo;

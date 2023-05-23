@@ -26,6 +26,8 @@ const Base = styled.div`
   align-items: center;
   width: 100vw;
   height: 100vh;
+  background-color: var(--main-bgc);
+  color: var(--main-color);
 `;
 
 const Title = styled.div`

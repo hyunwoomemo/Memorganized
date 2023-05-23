@@ -32,6 +32,7 @@ const defaultStyle = css`
       --border1-color: #fff;
       --border2-color: #1d1d1d;
       --theme-btn-bgc: #737e31;
+      --theme-bgc: #1d1d1d;
     }
 
     body[data-theme="light"] {
@@ -50,6 +51,7 @@ const defaultStyle = css`
       --border1-color: #000;
       --border2-color: #c6c6c6;
       --theme-btn-bgc: #c0b4c1;
+      --theme-bgc: #e4e4e4;
     }
   }
 

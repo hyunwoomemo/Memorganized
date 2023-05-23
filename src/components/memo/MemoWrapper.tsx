@@ -30,7 +30,9 @@ const MemoWrapper = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteDoc(doc(db, "memos", id));
-      console.log("Document successfully deleted!");
+      toast("삭제되었습니다!", {
+        icon: "🗑️",
+      });
     } catch (error) {
       console.error("Error deleting document: ", error);
     }
@@ -92,16 +94,31 @@ const MemoWrapper = () => {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    console.log("삭제!");
-    draggedMemo && handleDelete(draggedMemo);
+    toast(
+      (t) => (
+        <DeleteToast>
+          <span>정말 삭제하시겠습니까?</span>
+          <button
+            onClick={() => {
+              draggedMemo && handleDelete(draggedMemo);
+              toast.dismiss(t.id);
+            }}
+          >
+            확인
+          </button>
+          <button onClick={() => toast.dismiss(t.id)}>취소</button>
+        </DeleteToast>
+      ),
+      {
+        icon: "🗑️",
+        style: {
+          background: "var(--danger-color)",
+          color: "#fff",
+        },
+      }
+    );
+
     setDeleteAble(false);
-    toast("삭제되었습니다!", {
-      icon: "🗑️",
-      style: {
-        background: "var(--danger-color)",
-        color: "var(--main-text)",
-      },
-    });
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
@@ -183,6 +200,10 @@ const ItemWrapper = styled.div`
   cursor: pointer;
   overflow: hidden;
   transition: transform 0.3s;
+
+  &:hover {
+    border: 1px solid var(--primary-color);
+  }
 
   /*   &:before {
     content: "";
@@ -271,9 +292,26 @@ const TrashBinItem = styled.div<any>`
   ${({ deleteAble }) =>
     deleteAble
       ? css`
-          background-color: red;
+          background-color: #e74b4b;
         `
       : css``}
+`;
+
+const DeleteToast = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  > button {
+    border: 0;
+    background: #fff;
+    color: #000;
+    padding: 3px 6px;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+      background: #ececec;
+    }
+  }
 `;
 
 export default MemoWrapper;
