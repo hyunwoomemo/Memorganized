@@ -67,30 +67,18 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
     setCopied(true);
   };
 
+  console.log(content.replaceAll("</p>", "</p><br/>"));
+
   const parser = new DOMParser();
-  const parsedHTML = parser.parseFromString(content, "text/html");
+  const parsedHTML = parser.parseFromString(content.replaceAll("</p>", "</p><br/>"), "text/html");
+
+  const result = parsedHTML.documentElement.textContent?.replace(/\n/g, "<br>");
+
+  console.log(result);
 
   const plainText = parsedHTML.body.innerHTML.replace(/<br>/g, "\n").replace(/<\/?[^>]+(>|$)/g, "");
-
-  /*  window.addEventListener("popstate", (e) => {
-    e.preventDefault();
-
-    console.log("sdf");
-    setActiveDetail("");
-  });
-
-  useEffect(() => {
-    const handleBackButton = (e: any) => {
-      console.log("back");
-      setActiveDetail("");
-    };
-
-    window.onpopstate = handleBackButton;
-
-    return () => {
-      window.onpopstate = null;
-    };
-  }, []); */
+  /* console.log(parsedHTML);
+  console.log(plainText); */
 
   return (
     <Portal selector={selector}>
