@@ -8,6 +8,7 @@ import { AddContext } from "../../context/AddContext";
 import Search from "./Search";
 import { toast } from "react-hot-toast";
 import logo from "./logo192.png";
+import { BsFillGridFill } from "react-icons/bs";
 
 interface BeforeInstallPromptEvent extends Event {
   /**
@@ -102,11 +103,16 @@ const Memo = () => {
           <Search loc="main" />
         </MainHeader>
         <Header>
+          <ContaierTitle>
+            <BsFillGridFill />
+            Memo
+          </ContaierTitle>
           <Btn>
             {deferredPrompt && <InstallBtn onClick={() => handleInstall()}>앱 설치하기</InstallBtn>}
             <AddBtn onClick={() => setAddModal(true)}>메모 추가하기</AddBtn>
           </Btn>
         </Header>
+
         <MemoWrapper />
       </Base>
     </Container>
@@ -120,6 +126,21 @@ const Container = styled.div`
 
   @media (max-width: 768px) {
     padding: 1rem;
+  }
+`;
+
+const ContaierTitle = styled.span`
+  background-color: #3d3d3d;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  justify-content: flex-start;
+
+  > svg {
+    color: #fff;
+    transform: rotate(45deg);
   }
 `;
 
@@ -164,7 +185,7 @@ const MainHeader = styled.div`
   flex-wrap: wrap;
   justify-content: space-between;
   top: 0;
-  background-color: #000;
+  background-color: var(--main-bgc);
   z-index: 3;
 `;
 

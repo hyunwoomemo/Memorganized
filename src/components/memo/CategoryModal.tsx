@@ -19,9 +19,12 @@ const CategoryModal = ({ categoryInputRef, setShowCategoryModal, categorySearch,
     setCategorySearch("");
   };
 
+  console.log(categoryInputRef.current.value.length);
+
   return (
     <Base categoryLength={uniqueCategory.length}>
       <CategoryWrapper>
+        {!categoryInputRef.current.value.length && <CloseBtn onClick={() => setShowCategoryModal(false)}>닫기</CloseBtn>}
         {uniqueCategory
           .filter((item: string) => item !== "")
           .map((item: string) => {
@@ -56,6 +59,18 @@ const CategoryWrapper = styled.div`
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+`;
+
+const CloseBtn = styled.div`
+  cursor: pointer;
+  padding: 1rem;
+  margin-left: 1rem;
+  border-radius: 5px;
+  background-color: var(--main-bgc);
+
+  &:hover {
+    color: var(--primary-color);
+  }
 `;
 
 const CategoryItem = styled.div`

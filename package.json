@@ -12,13 +12,13 @@
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
     "@toast-ui/editor": "^3.2.2",
+    "@toast-ui/editor-plugin-color-syntax": "^3.1.0",
     "@toast-ui/react-editor": "^3.2.3",
     "@types/jest": "^27.0.1",
     "@types/lodash": "^4.14.194",
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@types/react-transition-group": "^4.4.6",
     "firebase": "^9.22.0",
     "gsap": "^3.11.5",
     "history": "^5.3.0",
@@ -39,10 +39,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "react-start": "set BROWSER=none && yarn start",
-    "electron-start": "set ELECTRON_START_URL=https://memorganized.vercel.app/ && electron .",
-    "electron-pack": "yarn build && electron-builder build -c.extraMetadata.main=build/Main.js"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

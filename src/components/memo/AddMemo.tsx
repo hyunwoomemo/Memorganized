@@ -7,7 +7,7 @@ import TuiEditor from "./TuiEditor";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../service/firbase";
 import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { UserContext } from "../../context/UserContext";
 import CategoryModal from "./CategoryModal";
 import { css } from "@emotion/react";
@@ -57,11 +57,6 @@ const AddMemo = ({ selector = "#portal" }) => {
         toast.error("글을 작성해주세요");
         return;
       }
-
-      /* if (!data.category) {
-        toast.error("카테고리를 선택해주세요.");
-        return;
-      } */
 
       // add firestore
       await addDoc(collection(db, "memos"), {

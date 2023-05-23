@@ -28,6 +28,8 @@ interface Props {
 const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props) => {
   const { setActiveDetail } = useContext(ActiveDetailContext);
 
+  console.log(content);
+
   const [editMode, setEditMode] = useState(false);
   const handleUpdate = () => {
     setEditMode(!editMode);
@@ -67,10 +69,7 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
     setCopied(true);
   };
 
-  console.log(content.replaceAll("</p>", "</p><br/>"));
-
   const parser = new DOMParser();
-  console.log(content);
   const modifyContent = content
     .replaceAll("</p>", "</p><br/>")
     .replaceAll("</h1>", "</h1><br/>")
@@ -79,16 +78,9 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
     .replaceAll("</h4>", "</h4><br/>")
     .replaceAll("</h5>", "</h5><br/>")
     .replaceAll("</h6>", "</h6><br/>");
-  console.log(modifyContent);
   const parsedHTML = parser.parseFromString(modifyContent, "text/html");
 
-  const result = parsedHTML.documentElement.textContent?.replace(/\n/g, "<br>");
-
-  /* console.log(result); */
-
   const plainText = parsedHTML.body.innerHTML.replace(/<br>/g, "\n").replace(/<\/?[^>]+(>|$)/g, "");
-  /* console.log(parsedHTML);
-  console.log(plainText); */
 
   return (
     <Portal selector={selector}>

@@ -12,7 +12,6 @@ import { toast } from "react-hot-toast";
 import { GoTrashcan } from "react-icons/go";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import Previewr from "./Previewr";
-
 import { FilterCategory } from "../../context/FilterCategory";
 import { SearchMemo } from "../../context/SearchMemo";
 
@@ -98,6 +97,10 @@ const MemoWrapper = () => {
     setDeleteAble(false);
     toast("삭제되었습니다!", {
       icon: "🗑️",
+      style: {
+        background: "var(--danger-color)",
+        color: "var(--main-text)",
+      },
     });
   };
 
@@ -168,8 +171,8 @@ const Base = styled.div`
 `;
 
 const ItemWrapper = styled.div`
-  max-height: 200px;
-  background-color: #121212;
+  max-height: 300px;
+  border: 1px solid var(--sub-bgc);
   border-radius: 5px;
   padding: 1rem;
   display: flex;

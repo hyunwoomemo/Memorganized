@@ -5,7 +5,7 @@ const defaultStyle = css`
   :root {
     --main-bgc: #000;
     --main-color: #fff;
-    --sub-bgc: #121212;
+    --sub-bgc: #1d1d1d;
     --primary-color: #f1c959;
     --danger-color: #f15972;
     --text-color: #c3c3c3;

@@ -11,6 +11,7 @@ import { css } from "@emotion/react";
 import { SearchMemo } from "../../context/SearchMemo";
 import { ShowSidebar } from "../../context/ShowSidebar";
 import { CgArrowUpO } from "react-icons/cg";
+import { BiCategoryAlt } from "react-icons/bi";
 const { throttle } = require("lodash");
 
 const Sidebar = ({ user }: any) => {
@@ -76,7 +77,9 @@ const Sidebar = ({ user }: any) => {
         </Title>
         <Search loc="sidebar" />
         <Category onClick={handleCategory}>
-          📚 Category{" "}
+          <span>
+            <BiCategoryAlt /> Category
+          </span>
           <Arrow hideCategory={hideCategory}>
             <CgArrowUpO />
           </Arrow>
@@ -164,6 +167,12 @@ const Category = styled.div`
   cursor: pointer;
   display: flex;
   align-items: center;
+
+  > span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 `;
 
 const Arrow = styled.span<{ hideCategory: boolean }>`
