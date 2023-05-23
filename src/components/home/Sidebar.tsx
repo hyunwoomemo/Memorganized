@@ -189,7 +189,7 @@ const Base = styled.div<{ screenWidth: number; showSidebar: boolean }>`
   top: 0;
   z-index: 5;
   background-color: var(--main-bgc);
-  /* transition: all 0.3s; */
+  transition: transform 0.3s;
   border-right: 1px solid var(--border2-color);
 `;
 
