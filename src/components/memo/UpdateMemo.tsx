@@ -78,7 +78,6 @@ const UpdateMemo = ({ content, setEditMode, id, title, category }: Update) => {
   return (
     <>
       <Wrapper className="wrapper">
-        <Overlay></Overlay>
         <Base onSubmit={handleUpdate}>
           <TitleWrapper>
             <TitleInput {...register("title")} placeholder="제목을 입력해주세요 (선택)" defaultValue={title}></TitleInput>
@@ -109,16 +108,6 @@ const UpdateMemo = ({ content, setEditMode, id, title, category }: Update) => {
 
 const Wrapper = styled.div`
   z-index: 999;
-`;
-
-const Overlay = styled.div`
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #00000086;
 `;
 
 const Base = styled.form`
@@ -184,10 +173,12 @@ const SubMit = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #2563ec;
+  background-color: var(--submit-btn-bgc);
   border: 0;
   color: var(--main-text);
   cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
 `;
 
 export default UpdateMemo;

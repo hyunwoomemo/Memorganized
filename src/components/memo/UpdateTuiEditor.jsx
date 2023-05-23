@@ -4,7 +4,8 @@ import "tui-color-picker/dist/tui-color-picker.css";
 import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";
 import { Editor } from "@toast-ui/react-editor";
 import colorSyntax from "@toast-ui/editor-plugin-color-syntax";
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import { IsDark } from "../../context/IsDark";
 
 /* interface Props {
   content: string;
@@ -12,6 +13,9 @@ import React, { useEffect } from "react";
 } */
 
 const UpdateTuiEditor = ({ content, editorRef } /* : Props */) => {
+  console.log(document.querySelector(".toastui-editor-defaultUI"));
+  const { isDark, setIsDark } = useContext(IsDark);
+
   const toolbarItems = [["heading", "bold", "italic", "strike"], ["hr"], ["ul", "ol"], ["table", "link"], ["image"], ["code"]];
 
   useEffect(() => {
@@ -30,7 +34,7 @@ const UpdateTuiEditor = ({ content, editorRef } /* : Props */) => {
           previewStyle={window.innerWidth > 1000 ? "vertical" : "tab"} // tab, vertical
           hideModeSwitch={true}
           height="100%"
-          theme={"dark"} // '' & 'dark'
+          theme={isDark ? "dark" : ""} // '' & 'dark'
           usageStatistics={false}
           toolbarItems={toolbarItems}
           useCommandShortcut={true}

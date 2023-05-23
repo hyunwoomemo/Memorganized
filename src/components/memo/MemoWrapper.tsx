@@ -167,12 +167,12 @@ const Base = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  padding: 2rem 0;
+  padding: 1rem 0 2rem;
 `;
 
 const ItemWrapper = styled.div`
   max-height: 300px;
-  border: 1px solid var(--sub-bgc);
+  border: 1px solid var(--border2-color);
   border-radius: 5px;
   padding: 1rem;
   display: flex;
@@ -184,6 +184,16 @@ const ItemWrapper = styled.div`
   overflow: hidden;
   transition: transform 0.3s;
 
+  /*   &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background-color: var(--primary-color);
+  } */
+
   @media (min-width: 768px) {
     &:hover {
     }
@@ -192,10 +202,10 @@ const ItemWrapper = styled.div`
 
 const ItemTitle = styled.div`
   font-size: 18px;
-  border-bottom: 1px solid #ffffff3c;
+  border-bottom: 1px solid var(--border2-color);
   padding: 1rem 0;
 
-  max-width: 500px;
+  max-width: 60vw;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

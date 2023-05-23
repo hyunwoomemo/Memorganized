@@ -12,6 +12,8 @@ import { SearchMemo } from "../../context/SearchMemo";
 import { ShowSidebar } from "../../context/ShowSidebar";
 import { CgArrowUpO } from "react-icons/cg";
 import { BiCategoryAlt } from "react-icons/bi";
+import { FiMoon, FiSun } from "react-icons/fi";
+import { IsDark } from "../../context/IsDark";
 const { throttle } = require("lodash");
 
 const Sidebar = ({ user }: any) => {
@@ -41,6 +43,23 @@ const Sidebar = ({ user }: any) => {
   const { searchMemo, setSearchMemo } = useContext(SearchMemo);
   const [active, setActive] = useState("전체");
 
+  console.log(uniqueCategory, categoryNameArray);
+
+  type Array = {
+    v: string;
+    i: number;
+    arr: [];
+  };
+
+  // 카테고리들을 [카테고리이름, 카테고리 길이] 로 바꿔 변수에 할당
+  const categoryWithLength = uniqueCategory.map((v: string, i: number, arr: []) => [v, categoryNameArray.filter((v1: string, i1: number, arr1: []) => v1 === v).length]);
+
+  // 카테고리 정렬
+
+  const sortedCategory = categoryWithLength.sort((a: any, b: any) => b[1] - a[1]).map((v: string, i: number, arr: []) => v[0]);
+
+  console.log(sortedCategory);
+
   useEffect(() => {
     setActive(filterCategory);
   }, [filterCategory]);
@@ -68,6 +87,28 @@ const Sidebar = ({ user }: any) => {
     setHideCategory(!hideCategory);
   };
 
+  // Theme 설정
+
+  const { isDark, setIsDark } = useContext(IsDark);
+
+  const handleTheme = () => {
+    setIsDark(!isDark);
+  };
+
+  useEffect(() => {
+    const el = document.querySelector(".toastui-editor-defaultUI");
+    console.log(el);
+    if (isDark) {
+      document.querySelector("body")?.setAttribute("data-theme", "dark");
+      el?.classList.add("toastui-editor-dark");
+      window.localStorage.setItem("theme", "dark");
+    } else {
+      document.querySelector("body")?.setAttribute("data-theme", "light");
+      el?.classList.remove("toastui-editor-dark");
+      window.localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
+
   return (
     <Base screenWidth={screenWidth} showSidebar={showSidebar}>
       <Container>
@@ -93,7 +134,7 @@ const Sidebar = ({ user }: any) => {
               setShowSidebar(false);
             }}
           >{`전체 (${categoryNameArray.length})`}</CategoryItem>
-          {uniqueCategory.map((item: string) => {
+          {sortedCategory.map((item: string) => {
             return (
               <CategoryItem
                 style={{ paddingLeft: "10px" }}
@@ -109,10 +150,16 @@ const Sidebar = ({ user }: any) => {
           })}
         </CategoryWrapper>
       </Container>
-      <Footer onClick={handleLogout}>
-        <span hidden={showLogout}>🔥 welcome,</span>
-        <Profile src={user.photoURL} alt="" />
-        {showLogout && <Button onClick={signOut}>로그아웃</Button>}
+      <Footer>
+        <Setting isDark={isDark} onClick={() => handleTheme()}>
+          <FiSun />
+          <FiMoon />
+        </Setting>
+        <div onClick={handleLogout}>
+          <span hidden={showLogout}>🔥 welcome,</span>
+          <Profile src={user.photoURL} alt="" />
+          {showLogout && <Button onClick={signOut}>로그아웃</Button>}
+        </div>
       </Footer>
     </Base>
   );
@@ -142,8 +189,8 @@ const Base = styled.div<{ screenWidth: number; showSidebar: boolean }>`
   top: 0;
   z-index: 5;
   background-color: var(--main-bgc);
-  transition: all 0.3s;
-  border-right: 1px solid #ffffff2b;
+  /* transition: all 0.3s; */
+  border-right: 1px solid var(--border2-color);
 `;
 
 const Container = styled.div`
@@ -223,17 +270,59 @@ const CategoryItem = styled.div<{ active: boolean }>`
       : undefined}
 `;
 
+const Setting = styled.div<{ isDark: boolean }>`
+  display: flex;
+  padding: 10px 10px;
+  background-color: var(--border2-color);
+  gap: 5rem;
+  border-radius: 25px;
+  font-size: 20px;
+  position: relative;
+  &:after {
+    transition: all 0.3s;
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 40px;
+    background-color: var(--theme-btn-bgc);
+    height: 100%;
+    border-radius: 50%;
+    z-index: 2;
+
+    ${({ isDark }) =>
+      isDark
+        ? css`
+            transform: translateX(0);
+          `
+        : css`
+            transform: translateX(-250%);
+          `}
+  }
+
+  svg {
+    z-index: 3;
+  }
+`;
+
 const Footer = styled.div`
   position: absolute;
   padding: 1rem;
   bottom: 0;
   width: 100%;
   display: flex;
-  border-top: 1px solid #ffffff2b;
+  border-top: 1px solid var(--border2-color);
   align-items: center;
   justify-content: center;
-  gap: 10px;
   cursor: pointer;
+  flex-direction: column;
+  gap: 2rem;
+
+  > div:last-of-type {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 `;
 
 const Profile = styled.img`
@@ -244,7 +333,7 @@ const Profile = styled.img`
 
 const Button = styled.button`
   border: 0;
-  background-color: var(--sub-bgc);
+  background-color: var(--border2-color);
   color: var(--main-text);
   padding: 3px 5px;
   border-radius: 5px;

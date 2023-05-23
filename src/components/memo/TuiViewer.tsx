@@ -85,7 +85,6 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
   return (
     <Portal selector={selector}>
       <Wrapper>
-        <Overlay></Overlay>
         <Base editMode={editMode} ref={baseRef}>
           {category && <Category>{category}</Category>}
           <Util>
@@ -124,16 +123,6 @@ const Wrapper = styled.div<any>`
   user-select: text;
 `;
 
-const Overlay = styled.div`
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #00000086;
-`;
-
 const Base = styled.div<{ editMode: boolean }>`
   position: absolute;
   top: 50%;
@@ -143,7 +132,7 @@ const Base = styled.div<{ editMode: boolean }>`
   z-index: 998;
   width: 100vw;
   height: 100vh;
-  background-color: var(--sub-bgc);
+  background-color: var(--memo-viewer-bgc);
   color: var(--main-text);
   padding: 4rem 0 0;
 
@@ -162,6 +151,9 @@ const Base = styled.div<{ editMode: boolean }>`
 const Title = styled.div`
   font-size: 20px;
   flex: 1 1 auto;
+  max-width: 60vw;
+  margin-right: auto;
+  word-wrap: break-word;
 `;
 
 const Category = styled.span`
@@ -219,7 +211,7 @@ const UtilItem = styled.div`
 
 const ViewerStyle = styled.div`
   padding: 1rem;
-  background-color: #1f1f1f;
+  background-color: var(--memo-viewer-bgc);
 `;
 
 const Copy = styled(UtilItem)`

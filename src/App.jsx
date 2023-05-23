@@ -14,6 +14,7 @@ import { CategoryContext } from "./context/CategoryContext";
 import { FilterCategory } from "./context/FilterCategory";
 import { SearchMemo } from "./context/SearchMemo";
 import { ShowSidebar } from "./context/ShowSidebar";
+import { IsDark } from "./context/IsDark";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -23,6 +24,7 @@ function App() {
   const [filterCategory, setFilterCategory] = useState("전체");
   const [searchMemo, setSearchMemo] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
+  const [isDark, setIsDark] = useState(window.localStorage.getItem("theme") === "dark" ? true : false);
   console.log(user);
 
   useEffect(() => {
@@ -35,26 +37,28 @@ function App() {
 
   return (
     <Router>
-      <UserContext.Provider value={{ user }}>
-        <AddContext.Provider value={{ addModal, setAddModal }}>
-          <ActiveDetailContext.Provider value={{ activeDetail, setActiveDetail }}>
-            <CategoryContext.Provider value={{ category, setCategory }}>
-              <FilterCategory.Provider value={{ filterCategory, setFilterCategory }}>
-                <SearchMemo.Provider value={{ searchMemo, setSearchMemo }}>
-                  <ShowSidebar.Provider value={{ showSidebar, setShowSidebar }}>
-                    <Base>
-                      <ResetStyle />
-                      <GlobalStyle />
-                      {user ? <Layout user={user} /> : <Login></Login>}
-                      <Routes></Routes>
-                    </Base>
-                  </ShowSidebar.Provider>
-                </SearchMemo.Provider>
-              </FilterCategory.Provider>
-            </CategoryContext.Provider>
-          </ActiveDetailContext.Provider>
-        </AddContext.Provider>
-      </UserContext.Provider>
+      <IsDark.Provider value={{ isDark, setIsDark }}>
+        <UserContext.Provider value={{ user }}>
+          <AddContext.Provider value={{ addModal, setAddModal }}>
+            <ActiveDetailContext.Provider value={{ activeDetail, setActiveDetail }}>
+              <CategoryContext.Provider value={{ category, setCategory }}>
+                <FilterCategory.Provider value={{ filterCategory, setFilterCategory }}>
+                  <SearchMemo.Provider value={{ searchMemo, setSearchMemo }}>
+                    <ShowSidebar.Provider value={{ showSidebar, setShowSidebar }}>
+                      <Base>
+                        <ResetStyle />
+                        <GlobalStyle />
+                        {user ? <Layout user={user} /> : <Login></Login>}
+                        <Routes></Routes>
+                      </Base>
+                    </ShowSidebar.Provider>
+                  </SearchMemo.Provider>
+                </FilterCategory.Provider>
+              </CategoryContext.Provider>
+            </ActiveDetailContext.Provider>
+          </AddContext.Provider>
+        </UserContext.Provider>
+      </IsDark.Provider>
     </Router>
   );
 }

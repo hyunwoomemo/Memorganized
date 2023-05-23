@@ -65,7 +65,6 @@ const Memo = () => {
             <img src={logo}></img>
             <span>앱을 설치해주세요</span>
             <button onClick={() => handleInstall()}>설치</button>
-            <button onClick={() => toast.dismiss(t.id)}>취소</button>
           </InstallToast>
         ),
         {
@@ -130,16 +129,20 @@ const Container = styled.div`
 `;
 
 const ContaierTitle = styled.span`
-  background-color: #3d3d3d;
+  border: 1px solid var(--btn1-bgc);
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 14px;
-  border-radius: 10px;
+  padding: var(--pd-10-20);
+  border-radius: var(--radius-xlarge);
   justify-content: flex-start;
 
+  @media (max-width: 768px) {
+    padding: var(--pd-8-14);
+  }
+
   > svg {
-    color: #fff;
+    color: var(--main-color);
     transform: rotate(45deg);
   }
 `;
@@ -149,7 +152,7 @@ const Overlay = styled.div<{ showSidebar: boolean }>`
   height: 100%;
   top: 0;
   left: 0;
-  background-color: #000;
+  background-color: var(--overlay-bgc);
   opacity: 0.5;
   position: absolute;
   z-index: 4;
@@ -220,17 +223,17 @@ const Btn = styled.div`
     margin-left: auto;
   }
   > div {
-    padding: 10px 20px;
-    border-radius: 25px;
-    background-color: #1c1c1c;
+    padding: var(--pd-10-20);
+    border-radius: var(--radius-xlarge);
+    border: 1px solid var(--btn1-bgc);
     color: var(--primary-color);
     cursor: pointer;
     &:hover {
-      background-color: #2d2d2d;
+      background-color: var(--btn1-hover);
     }
     @media (max-width: 768px) {
-      padding: 8px 14px;
-      border-radius: 25px;
+      padding: var(--pd-8-14);
+      border-radius: var(--radius-xlarge);
     }
   }
 `;
@@ -247,10 +250,11 @@ const InstallToast = styled.div`
   }
 
   > button {
-    border: 0;
-    background-color: #f5dfe3;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
     padding: 5px 10px;
     border-radius: 5px;
+    background: none;
   }
 `;
 

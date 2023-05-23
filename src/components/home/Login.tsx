@@ -51,7 +51,7 @@ const Button = styled.button`
   gap: 1rem;
   font-size: 20px;
   cursor: pointer;
-  border: 1px solid #fff;
+  border: 1px solid var(--border1-color);
   padding: 1rem;
 
   @media (max-width: 768px) {

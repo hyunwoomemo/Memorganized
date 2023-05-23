@@ -42,7 +42,7 @@ const Base = styled.div<{ loc?: string }>`
 
   > input {
     background: none;
-    border: 2px solid #ffffff;
+    border: 2px solid var(--border1-color);
     outline: none;
     border-radius: 10px;
     color: var(--main-color);

@@ -15,6 +15,7 @@ const Previewr = ({ content = "" }: Props) => {
 };
 
 const Wrapper = styled.div<any>`
+  max-width: 60vw;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 5;

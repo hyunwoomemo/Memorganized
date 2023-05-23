@@ -102,7 +102,6 @@ const AddMemo = ({ selector = "#portal" }) => {
   return (
     <Portal selector={selector}>
       <Wrapper show={addModal}>
-        <Overlay></Overlay>
         <Base onSubmit={handleSave}>
           <TitleWrapper>
             <TitleInput onFocus={() => setShowCategoryModal(false)} {...register("title")} placeholder="제목을 입력해주세요 (선택)"></TitleInput>
@@ -133,16 +132,6 @@ const Wrapper = styled.div<{ show: boolean }>`
       : css`
           display: none;
         `}
-`;
-
-const Overlay = styled.div`
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #00000086;
 `;
 
 const Base = styled.form`
@@ -209,16 +198,12 @@ const SubMit = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #2563ec;
+  background-color: var(--submit-btn-bgc);
   border: 0;
   color: var(--main-text);
   cursor: pointer;
   position: relative;
   border-radius: 0 0 5px 0;
-`;
-
-const Toast = styled.div`
-  z-index: 999;
 `;
 
 export default AddMemo;
