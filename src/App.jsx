@@ -14,7 +14,6 @@ import { CategoryContext } from "./context/CategoryContext";
 import { FilterCategory } from "./context/FilterCategory";
 import { SearchMemo } from "./context/SearchMemo";
 import { ShowSidebar } from "./context/ShowSidebar";
-import Home from "./components/page/Home";
 
 function App() {
   const [user, setUser] = useState(null);

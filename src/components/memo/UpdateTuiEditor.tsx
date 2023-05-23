@@ -9,7 +9,7 @@ interface Props {
 }
 
 const UpdateTuiEditor = ({ content, editorRef }: Props) => {
-  const toolbarItems = [["heading", "bold", "italic", "strike"], ["hr"], ["ul", "ol", "task"], ["table", "link"], ["image"], ["code"]];
+  const toolbarItems = [["heading", "bold", "italic", "strike"], ["hr"], ["ul", "ol"], ["table", "link"], ["image"], ["code"]];
 
   useEffect(() => {
     const htmlString = content;

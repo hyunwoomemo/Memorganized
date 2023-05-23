@@ -70,11 +70,21 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
   console.log(content.replaceAll("</p>", "</p><br/>"));
 
   const parser = new DOMParser();
-  const parsedHTML = parser.parseFromString(content.replaceAll("</p>", "</p><br/>"), "text/html");
+  console.log(content);
+  const modifyContent = content
+    .replaceAll("</p>", "</p><br/>")
+    .replaceAll("</h1>", "</h1><br/>")
+    .replaceAll("</h2>", "</h2><br/>")
+    .replaceAll("</h3>", "</h3><br/>")
+    .replaceAll("</h4>", "</h4><br/>")
+    .replaceAll("</h5>", "</h5><br/>")
+    .replaceAll("</h6>", "</h6><br/>");
+  console.log(modifyContent);
+  const parsedHTML = parser.parseFromString(modifyContent, "text/html");
 
   const result = parsedHTML.documentElement.textContent?.replace(/\n/g, "<br>");
 
-  console.log(result);
+  /* console.log(result); */
 
   const plainText = parsedHTML.body.innerHTML.replace(/<br>/g, "\n").replace(/<\/?[^>]+(>|$)/g, "");
   /* console.log(parsedHTML);
