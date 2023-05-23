@@ -15,6 +15,7 @@ import { db } from "../../service/firbase";
 import { toast } from "react-hot-toast";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { createBrowserHistory } from "history";
+import { gsap } from "gsap";
 
 interface Props {
   content: string;
@@ -27,8 +28,6 @@ interface Props {
 
 const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props) => {
   const { setActiveDetail } = useContext(ActiveDetailContext);
-
-  console.log(content);
 
   const [editMode, setEditMode] = useState(false);
   const handleUpdate = () => {
@@ -104,9 +103,30 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
 
   const plainText = parsedHTML.body.innerHTML.replace(/<br>/g, "\n").replace(/<\/?[^>]+(>|$)/g, "");
 
+  // gsap 애니메이션
+
+  /*   useEffect(() => {
+    if (content && baseRef.current) {
+      let tl = gsap.timeline(); //순서대로 gsap 사용하기
+      tl.from(baseRef.current, {
+        right: "50px",
+        opacity: 0,
+      });
+      tl.to(baseRef.current, {
+        right: "25px",
+        opacity: 0.5,
+      });
+      tl.to(baseRef.current, {
+        right: "0",
+        opacity: 0.7,
+      });
+    }
+  }, [content]); */
+
   return (
     <Portal selector={selector}>
       <Wrapper>
+        <Overlay onClick={() => setActiveDetail(false)} content={content}></Overlay>
         <Base editMode={editMode} ref={baseRef}>
           {category && <Category>{category}</Category>}
           <Util>
@@ -141,24 +161,51 @@ const TuiViewer = ({ content, selector = "#portal", id, title, category }: Props
 };
 
 const Wrapper = styled.div<any>`
-  transition: all 0.3s;
   user-select: text;
+`;
+
+const Overlay = styled.div<{ content: string }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: var(--overlay-bgc);
+  opacity: 0.5;
+  z-index: 9;
+  cursor: pointer;
+  ${({ content }) =>
+    content
+      ? css`
+          pointer-events: all;
+          display: block;
+        `
+      : css`
+          pointer-events: none;
+          display: none;
+        `}
 `;
 
 const Base = styled.div<{ editMode: boolean }>`
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 0;
+  right: 0;
   padding: 1rem;
-  transform: translate(-50%, -50%);
   z-index: 998;
-  width: 100vw;
+  max-width: 50vw;
+  width: 100%;
   height: 100vh;
   background-color: var(--memo-viewer-bgc);
   color: var(--main-text);
   padding: 4rem 0 0;
+  box-shadow: 0 0 5px 1px var(--text-color);
+  transition: opacity 0.3s;
 
-  transition: all 0.3s;
+  @media (max-width: 768px) {
+    max-width: 100vw;
+  }
 
   ${({ editMode }) =>
     editMode

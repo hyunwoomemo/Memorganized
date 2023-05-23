@@ -30,7 +30,7 @@ const defaultStyle = css`
       --submit-btn-bgc: #5991f1;
       --memo-viewer-bgc: #1f1f1f;
       --border1-color: #fff;
-      --border2-color: #1d1d1d;
+      --border2-color: #393939;
       --theme-btn-bgc: #737e31;
       --theme-bgc: #1d1d1d;
     }
