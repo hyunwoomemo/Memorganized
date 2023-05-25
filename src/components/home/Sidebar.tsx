@@ -143,7 +143,7 @@ const Sidebar = ({ user }: any) => {
       <Container>
         <Title>
           <FaCube />
-          Memorganized
+          간편한 메모
         </Title>
         <Search loc="sidebar" />
         <Category onClick={handleCategory}>
@@ -220,6 +220,7 @@ const Base = styled.div<{ screenWidth: number; showSidebar: boolean }>`
   background-color: var(--main-bgc);
   transition: transform 0.3s;
   border-right: 1px solid var(--border2-color);
+  min-width: 250px;
 `;
 
 const Container = styled.div`

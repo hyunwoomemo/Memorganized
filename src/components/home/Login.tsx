@@ -2,13 +2,23 @@ import styled from "@emotion/styled";
 import { signInGoogle } from "../../service/firbase";
 import { FcGoogle } from "react-icons/fc";
 import { FaCube } from "react-icons/fa";
+import { useEffect } from "react";
 
-const Login = () => {
+type LoginProps = {
+  isDark: boolean;
+  setIsDark: any;
+};
+
+const Login = ({ isDark, setIsDark }: LoginProps) => {
+  useEffect(() => {
+    setIsDark(window.localStorage.getItem("theme") === "dark" ? true : false);
+  }, []);
+
   return (
     <Base>
       <Title>
         <FaCube />
-        Memorganized
+        간편한 메모
       </Title>
       <Button onClick={signInGoogle}>
         <FcGoogle />

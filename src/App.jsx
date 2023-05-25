@@ -48,7 +48,7 @@ function App() {
                       <Base>
                         <ResetStyle />
                         <GlobalStyle />
-                        {user ? <Layout user={user} /> : <Login></Login>}
+                        {user ? <Layout user={user} /> : <Login isDark={isDark} setIsDark={setIsDark}></Login>}
                         <Routes></Routes>
                       </Base>
                     </ShowSidebar.Provider>

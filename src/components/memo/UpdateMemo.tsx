@@ -111,16 +111,38 @@ const Wrapper = styled.div`
 `;
 
 const Base = styled.form`
-  width: 100vw;
+  max-width: 100vw;
+  width: 100%;
   height: 100vh;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  right: 0;
   background-color: var(--sub-bgc);
   display: flex;
   flex-direction: column;
   z-index: 9;
+
+  @media (min-width: 768px) {
+    max-width: 50vw;
+    width: 100%;
+    top: 0;
+    right: 0;
+    left: unset;
+    transform: translate(0, 0);
+    box-shadow: 0 0 5px 1px var(--text-color);
+  }
+
+  .toastui-editor-popup-add-heading {
+    margin: 0;
+  }
+
+  @media (max-width: 480px) {
+    .toastui-editor-dropdown-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      height: auto;
+    }
+  }
 `;
 
 const TitleWrapper = styled.div`

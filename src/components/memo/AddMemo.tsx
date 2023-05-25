@@ -146,6 +146,28 @@ const Base = styled.form`
   flex-direction: column;
   border-radius: 5px;
   z-index: 9;
+
+  @media (min-width: 768px) {
+    max-width: 50vw;
+    width: 100%;
+    top: 0;
+    right: 0;
+    left: unset;
+    transform: translate(0, 0);
+    box-shadow: 0 0 5px 1px var(--text-color);
+  }
+
+  .toastui-editor-popup-add-heading {
+    margin: 0;
+  }
+
+  @media (max-width: 480px) {
+    .toastui-editor-dropdown-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      height: auto;
+    }
+  }
 `;
 
 const TitleWrapper = styled.div`
