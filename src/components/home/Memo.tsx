@@ -97,7 +97,7 @@ const Memo = () => {
         <MainHeader>
           <Title onClick={handleClick}>
             <FaCube />
-            Memorganized
+            간편한 메모
           </Title>
           <Search loc="main" />
         </MainHeader>
