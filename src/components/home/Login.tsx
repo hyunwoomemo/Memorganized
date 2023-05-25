@@ -4,15 +4,8 @@ import { FcGoogle } from "react-icons/fc";
 import { FaCube } from "react-icons/fa";
 import { useEffect } from "react";
 
-type LoginProps = {
-  isDark: boolean;
-  setIsDark: any;
-};
-
-const Login = ({ isDark, setIsDark }: LoginProps) => {
-  useEffect(() => {
-    setIsDark(window.localStorage.getItem("theme") === "dark" ? true : false);
-  }, []);
+const Login = () => {
+  useEffect(() => {}, []);
 
   return (
     <Base>
