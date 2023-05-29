@@ -8,7 +8,8 @@
 <img src="https://img.shields.io/badge/pwa-5A0FC8?style=flat-squre&logo=PWA&logoColor=white">
 <img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat-squre&logo=JavaScript&logoColor=black">
 <img src="https://img.shields.io/badge/typescript-3178C6?style=flat-squre&logo=typescript&logoColor=white">
-<img src="https://img.shields.io/badge/firebase-FFCA28?style=flat-squre&logo=firebase&logoColor=white">
+<img src="https://img.shields.io/badge/firebase-FF4154?style=flat-squre&logo=firebase&logoColor=white">
+<img src="https://img.shields.io/badge/reactquery-FFCA28?style=flat-squre&logo=reactquery&logoColor=white">
 <img src="https://img.shields.io/badge/react-61DAFB?style=flat-squre&logo=React&logoColor=black">
 <img src="https://img.shields.io/badge/html-E34F26?style=flat-squre&logo=HTML5&logoColor=black">
 <img src="https://img.shields.io/badge/css-1572B6?style=flat-squre&logo=CSS3&logoColor=black">
@@ -19,19 +20,8 @@
 
 ### 주요 기능
 
-- 분유 시간 기록 (유산균, 비타민 섭취 여부, 하루 총 분유 섭취량)
-- 수면 시간 기록 (잠 든 시간, 잠 깬 시간, 하루 총 수면 시간)
-- 기저귀 시간 기록
-- 목욕 여부 및 시간 기록
-- 아이의 주요한 일정 기록 (병원, 100일 잔치 등)
-
-### 서비스 화면
-
-### 메인페이지 상단 - 캘린더
-<img src="https://user-images.githubusercontent.com/105469077/235883185-5ebafa60-eca8-409a-80d7-765e72e08be4.png" width="50%" />
-
-### 메인페이지 하단 - 캘린더 
-<img src="https://user-images.githubusercontent.com/105469077/235883495-0c12d5ac-61c6-4e6c-adc0-0ba7d1437ca2.png" width="50%"/>
+- 메모 등록
+- 카테고리별 메모 조회
 
 ### 서비스 페이지
-<a href="https://wooah.site/" target="_blank"><img src="https://img.shields.io/badge/Wooah-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white"></a>
+<a href="https://memorganized.vercel.app/" target="_blank"><img src="https://img.shields.io/badge/간편한 메모-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white"></a>
