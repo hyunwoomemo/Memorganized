@@ -9,7 +9,6 @@
 <img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat-squre&logo=JavaScript&logoColor=black">
 <img src="https://img.shields.io/badge/typescript-3178C6?style=flat-squre&logo=typescript&logoColor=white">
 <img src="https://img.shields.io/badge/firebase-FF4154?style=flat-squre&logo=firebase&logoColor=white">
-<img src="https://img.shields.io/badge/reactquery-FFCA28?style=flat-squre&logo=reactquery&logoColor=white">
 <img src="https://img.shields.io/badge/react-61DAFB?style=flat-squre&logo=React&logoColor=black">
 <img src="https://img.shields.io/badge/html-E34F26?style=flat-squre&logo=HTML5&logoColor=black">
 <img src="https://img.shields.io/badge/css-1572B6?style=flat-squre&logo=CSS3&logoColor=black">
