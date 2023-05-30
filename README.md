@@ -25,6 +25,7 @@
 ### 서비스 화면
 
 ![image](https://github.com/hyunwoomemo/Memorganized/assets/105469077/a2fb4eef-812f-4138-b1d9-c6102ee89441)
+![image](https://github.com/hyunwoomemo/Memorganized/assets/105469077/ab8f8e56-97a8-4a1a-bc7c-59e3be20bbb0)
 
 
 ### 서비스 페이지
