@@ -22,5 +22,10 @@
 - 메모 등록
 - 카테고리별 메모 조회
 
+### 서비스 화면
+
+![image](https://github.com/hyunwoomemo/Memorganized/assets/105469077/a2fb4eef-812f-4138-b1d9-c6102ee89441)
+
+
 ### 서비스 페이지
 <a href="https://memorganized.vercel.app/" target="_blank"><img src="https://img.shields.io/badge/간편한 메모-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white"></a>
